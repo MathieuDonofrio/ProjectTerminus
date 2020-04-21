@@ -4,12 +4,14 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: DamageZone
-  m_Shader: {fileID: 4800000, guid: d97b2475e12b5c146a78083b2fdbff44, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 3e380b8b8bcd9e5418dc2b0343b7c168,
+    type: 3}
   m_ShaderKeywords: 
-  m_LightmapFlags: 0
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -75,6 +77,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Vector1_6991C0E5: 0.5
+    - Vector1_75743C5B: 0
+    - Vector1_F9598B1D: 1
     - _ASEOutlineWidth: 0.03
     - _BumpScale: 1
     - _Cutoff: 0.5

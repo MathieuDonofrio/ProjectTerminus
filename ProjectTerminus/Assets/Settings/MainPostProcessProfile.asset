@@ -23,8 +23,8 @@ MonoBehaviour:
     m_Value: 1
     min: 0
   scatter:
-    m_OverrideState: 0
-    m_Value: 0.7
+    m_OverrideState: 1
+    m_Value: 0.8
     min: 0
     max: 1
   clamp:
@@ -62,26 +62,26 @@ MonoBehaviour:
   active: 1
   m_AdvancedMode: 0
   color:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {r: 0, g: 0, b: 0, a: 1}
     hdr: 0
     showAlpha: 0
     showEyeDropper: 1
   center:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 0.1
     min: 0
     max: 1
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.4
+    m_Value: 1
     min: 0.01
     max: 1
   rounded:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -125,13 +125,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 700195ee1f88f3a4184bb07db7ea2046, type: 3}
   m_Name: GrayScale
   m_EditorClassIdentifier: Assembly-CSharp::GrayScale
-  active: 1
-  m_AdvancedMode: 0
-  intensity:
-    m_OverrideState: 1
-    m_Value: 0.044
-    min: 0
-    max: 1
+  health: 0
+  maxHealth: 10
+  invincible: 0
+  damageMultiplier: 1
+  selfDamageModifier: 0.5
+  physicalDamageModifier: 1
+  projectileDamageModifier: 1
+  explosionDamageModifier: 1
