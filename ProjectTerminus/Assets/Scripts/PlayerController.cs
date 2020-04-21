@@ -13,7 +13,6 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour
 {
-
     /* Configuration */
 
     [Tooltip("Amount of movement per second")]
