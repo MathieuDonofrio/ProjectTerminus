@@ -22,6 +22,8 @@ public class PlayerInputHandler : MonoBehaviour
 
     private float lastForwardMove;
 
+    private float lastFire;
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -30,14 +32,14 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void Update()
     {
-        handleSprintInput();
+        HandleSprintInput();
+        HandleFireInput();
     }
 
     /* Handlers */
 
-    public void handleSprintInput()
+    public void HandleSprintInput()
     {
-        
         if(Input.GetButtonDown(GameConstants.k_Sprint))
         {
             forwardMoveCount++;
@@ -47,6 +49,14 @@ public class PlayerInputHandler : MonoBehaviour
         if(!Input.GetButton(GameConstants.k_Sprint) && Time.time - lastForwardMove > doublePressDelay)
         {
             forwardMoveCount = 0;
+        }
+    }
+
+    public void HandleFireInput()
+    {
+        if (Input.GetButtonDown(GameConstants.k_Fire))
+        {
+            lastFire = Time.time;
         }
     }
 
@@ -89,14 +99,28 @@ public class PlayerInputHandler : MonoBehaviour
         return sprint;
     }
 
+    public bool GetFireDownInput(float releaseDelay)
+    {
+        bool fire = Input.GetButtonDown(GameConstants.k_Fire);
+
+        fire |= Time.time - lastFire <= releaseDelay;
+
+        return fire;
+    }
+
+    public bool GetFireInput()
+    {
+        return Input.GetButton(GameConstants.k_Fire);
+    }
+
     public bool GetJumpInput()
     {
-        return Input.GetAxis(GameConstants.k_Jump) > 0;
+        return Input.GetButton(GameConstants.k_Jump);
     }
 
     public bool GetCrouchInput()
     {
-        return Input.GetAxis(GameConstants.k_Crouch) > 0;
+        return Input.GetButton(GameConstants.k_Crouch);
     }
 
 }

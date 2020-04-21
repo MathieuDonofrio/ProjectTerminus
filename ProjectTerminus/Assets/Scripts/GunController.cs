@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputHandler))]
@@ -10,7 +11,7 @@ public class GunController : MonoBehaviour
 
     [Header("Information")]
     [Tooltip("The name of the weapon")]
-    public string weaponName;
+    private string weaponName = "Unknown";
 
     [Header("Projectile Settings")]
     [Tooltip("The projectile that will be shot from the gun")]
@@ -29,9 +30,13 @@ public class GunController : MonoBehaviour
     [Tooltip("Amount of time between shots")]
     public float fireDelay = 0.5f;
 
-    [Tooltip("Amount of time between rounds. Applies only if roundsPerBurst > 1")]
-    public float roundDelay = 0.1f;
+    [Tooltip("Percentage amount of fire delay time used to shoot all rounds")]
+    public float burstTime = 0.6f;
 
+    [Tooltip("Fire delay is multiplied by this value if jitter clicking")]
+    public float semiFireDelayModifier = 0.5f;
+
+    [Header("Recoil Settings")]
     [Tooltip("Amount of spread applied when hipfiring")]
     public float spreadHip = 1;
 
@@ -47,6 +52,9 @@ public class GunController : MonoBehaviour
     [Header("Reload Settings")]
     [Tooltip("The type of reloading mechanisim")]
     public ReloadType reloadType = ReloadType.MAGAZINE;
+
+    [Tooltip("If the gun always has ammo to be reloaded")]
+    public bool unlimitedAmmo = true;
 
     [Tooltip("Amount of time in seconds to reload gun compleately")]
     public float reloadTime = 3f;
@@ -73,15 +81,16 @@ public class GunController : MonoBehaviour
 
     /* Required Components */
 
-    public PlayerInputHandler inputHandler;
+    private PlayerInputHandler inputHandler;
 
     /* State */
 
-    public int Clip { get; private set; }
+    [Header("Debug")]
+    public int Clip;
 
-    public bool IsReloading { get; private set; }
+    public bool IsReloading;
 
-    public bool IsFiring { get; private set; }
+    public bool IsFiring;
 
     /* Timestamps */
 
@@ -120,28 +129,28 @@ public class GunController : MonoBehaviour
 
     private void HandleFiring()
     {
-        if (HoldingFire() && Time.time - lastShot >= fireDelay || IsFiring && !IsReloading)
+        if (CheckFiringConditions())
         {
-            if(roundsPerBurst > 1)
+            if (firingType == FiringType.BURST && roundsPerBurst > 1)
             {
                 roundDelayCounter += Time.deltaTime;
 
-                while (roundDelayCounter >= roundDelay)
-                {
-                    roundCounter++;
+                float delay = fireDelay * burstTime / roundsPerBurst;
 
-                    if(roundCounter++ < roundsPerBurst)
+                while (roundDelayCounter >= delay || !IsFiring)
+                {
+                    if (roundCounter++ < roundsPerBurst)
                     {
                         Fire();
+
+                        roundDelayCounter -= delay;
                     }
-                    else 
+                    else
                     {
                         FinishFiring();
+
+                        break;
                     }
-
-                    roundDelayCounter -= roundDelay;
-
-                    Clip++;
                 }
             }
             else
@@ -157,38 +166,63 @@ public class GunController : MonoBehaviour
 
     private void HandleReloading()
     {
-        if(reloadType == ReloadType.INDIVIDUAL)
+        if (IsReloading)
         {
-            individualReloadCounter += Time.deltaTime;
-                 
-            float reloadFrac = (reloadTime - 0.01f) / maxClipSize;
-
-            while(individualReloadCounter >= reloadFrac)
+            if (reloadType == ReloadType.INDIVIDUAL && reloadAmt > 0)
             {
-                individualReloadCounter -= reloadFrac;
+                individualReloadCounter += Time.deltaTime;
 
-                Clip++;
+                float reloadFrac = (reloadTime - 0.01f) / maxClipSize;
+
+                while (individualReloadCounter >= reloadFrac)
+                {
+                    individualReloadCounter -= reloadFrac;
+
+                    Clip++;
+
+                    reloadAmt--;
+                }
             }
+
+        }
+
+        // Check clip for reload
+        if (!IsReloading && Clip == 0 && unlimitedAmmo)
+        {
+            Reload(maxClipSize);
         }
 
         // Finish reloading
-        if (Time.time - lastReload >= reloadTime) FinishReloading();
+        if (IsReloading && Time.time - lastReload >= reloadTime)
+        {
+            FinishReloading();
+        }
+
     }
 
     /* Services */
 
-    public void Shoot()
+    public bool Shoot()
     {
         // TODO
+
+        return true;
     }
 
     public void Fire()
     {
+        // Check clip amount
+        if (IsClipEmpty())
+            return;
+
         // Set firing to true
         IsFiring = true;
 
         // Call shoot
-        Shoot();
+        if (Shoot()) Clip--;
+
+        // Record last shot
+        lastShot = Time.time;
     }
 
     public void FinishFiring()
@@ -212,6 +246,9 @@ public class GunController : MonoBehaviour
         // Set reloading to true
         IsReloading = true;
 
+        // Finish firing
+        FinishFiring();
+
         // Set reload amount
         reloadAmt = Mathf.Min(amount, maxClipSize);
 
@@ -221,29 +258,62 @@ public class GunController : MonoBehaviour
 
     public void FinishReloading()
     {
-        // Set reloading to false
-        IsReloading = false;
+        // Individual Finalize
+        if (reloadType == ReloadType.INDIVIDUAL) Clip += reloadAmt;
+
+        // Magazine Finalize
+        if (reloadType == ReloadType.MAGAZINE) Clip = reloadAmt;
 
         // Set amount to 0
         reloadAmt = 0;
 
-        // Set clip
-        if(reloadType == ReloadType.MAGAZINE) Clip = reloadAmt;
-
         // Reset individual reload counter
         individualReloadCounter = 0;
+
+        // Set reloading to false
+        IsReloading = false;
     }
-    
-    public bool HoldingFire()
+
+    public bool CheckFiringConditions()
     {
-        return false; // TODO link to input
+        // Check holding fire
+        bool fire = inputHandler.GetFireInput();
+
+        // Get firing delay
+        float delay = firingType == FiringType.SEMI_AUTO
+            ? fireDelay * semiFireDelayModifier : fireDelay;
+
+        // Enable jitter clicking for semi auto and burst
+        if (firingType == FiringType.SEMI_AUTO || firingType == FiringType.BURST)
+        {
+            fire |= inputHandler.GetFireDownInput(delay * 0.8f);
+        }
+
+        // Check delay
+        fire &= Time.time - lastShot >= delay;
+
+        // Check if already firing
+        fire |= IsFiring;
+
+        // Check if reloading
+        fire &= !IsReloading;
+
+        // Check clip
+        fire &= Clip > 0;
+
+        return fire;
+    }
+
+    public bool IsClipEmpty()
+    {
+        return Clip <= 0;
     }
 
 }
 
 public enum FiringType
 {
-    AUTO, SEMI_AUTO
+    AUTO, SEMI_AUTO, BURST
 }
 
 public enum ReloadType

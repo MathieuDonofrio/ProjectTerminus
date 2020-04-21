@@ -16,4 +16,5 @@ public struct GameConstants
     public const string k_Sprint = "Sprint";
     public const string k_Jump = "Jump";
     public const string k_Crouch = "Crouch";
+    public const string k_Fire = "Fire";
 }
