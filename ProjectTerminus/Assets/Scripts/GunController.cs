@@ -86,7 +86,10 @@ public class GunController : MonoBehaviour
     /* State */
 
     [Header("Debug")]
+
     public int Clip;
+
+    public int reloadAmt;
 
     public bool IsReloading;
 
@@ -108,9 +111,6 @@ public class GunController : MonoBehaviour
 
     public float roundCounter;
 
-    /* Other */
-
-    public int reloadAmt;
 
     private void Start()
     {
