@@ -10,10 +10,10 @@ public class Hitmarker : MonoBehaviour
 
     [Header("Hitmarkers")]
     [Tooltip("Hitmarket displayed when shot has landed a hit but did not kill")]
-    public GameObject hit;
+    public RectTransform hit;
 
     [Tooltip("Hitmarket displayed on a kill")]
-    public GameObject kill;
+    public RectTransform kill;
 
     /* State */
 
@@ -21,18 +21,23 @@ public class Hitmarker : MonoBehaviour
 
     private bool isLastHitKill;
 
+    private void Start()
+    {
+        lastHit = float.MinValue;
+    }
+
     // Update is called once per frame
     void Update()
     {
         if(Time.time - lastHit < duration)
         {
-            hit.SetActive(!isLastHitKill);
-            kill.SetActive(isLastHitKill);
+            hit.gameObject.SetActive(!isLastHitKill);
+            kill.gameObject.SetActive(isLastHitKill);
         }
         else
         {
-            hit.SetActive(false);
-            kill.SetActive(false);
+            hit.gameObject.SetActive(false);
+            kill.gameObject.SetActive(false);
         }
     }
 

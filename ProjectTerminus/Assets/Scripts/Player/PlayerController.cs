@@ -378,7 +378,7 @@ public class PlayerController : MonoBehaviour
         hudController.UpdateHealth(entity.HealthRatio());
 
         // Update crosshair
-        hudController.UpdateCrosshair(velocity.magnitude); // TODO accuracy
+        hudController.UpdateCrosshair(0, velocity.magnitude); // TODO accuracy
     }
 
     private void FootstepSFX()

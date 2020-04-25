@@ -38,7 +38,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     /* Handlers */
 
-    public void HandleSprintInput()
+    private void HandleSprintInput()
     {
         if(Input.GetButtonDown(GameConstants.k_Sprint))
         {
@@ -52,7 +52,7 @@ public class PlayerInputHandler : MonoBehaviour
         }
     }
 
-    public void HandleFireInput()
+    private void HandleFireInput()
     {
         if (Input.GetButtonDown(GameConstants.k_Fire))
         {
@@ -60,8 +60,14 @@ public class PlayerInputHandler : MonoBehaviour
         }
     }
 
-    /* Inputs */
+    /* Services */
 
+    /// <summary>
+    /// Returns the move inputs in a vector3 where
+    /// x represents the horizontal movement and z represents the vertical movement.
+    /// Values are clamped between -1 and 1, 0 represents no movement.
+    /// </summary>
+    /// <returns>horizontal and vertical move inputs</returns>
     public Vector3 GetMoveInput()
     {
         Vector3 move = new Vector3(
@@ -75,11 +81,18 @@ public class PlayerInputHandler : MonoBehaviour
         return move;
     }
 
+    /// <summary>
+    /// Returns the moue inputs in a vector2 where
+    /// x represents the x axis and y represents the y axis.
+    /// Values are clamped between -1 and 1, 0 represents no movement.
+    /// Y axis is inverted
+    /// </summary>
+    /// <returns>x and y axis mouse movement</returns>
     public Vector2 GetMouseInputs()
     {
         Vector2 move = new Vector2(
-            Input.GetAxis(GameConstants.k_MouseAxisNameHorizontal),
-            Input.GetAxis(GameConstants.k_MouseAxisNameVertical));
+            Input.GetAxisRaw(GameConstants.k_MouseAxisNameHorizontal),
+            Input.GetAxisRaw(GameConstants.k_MouseAxisNameVertical));
 
         // Apply sensitivity curve
         move *= mouseSensitivityCurve.Evaluate(move.magnitude);
@@ -90,6 +103,11 @@ public class PlayerInputHandler : MonoBehaviour
         return move;
     }
 
+    /// <summary>
+    /// Returns whether or not the the player is sprinting. 
+    /// Checks to see if the player double clicked sprint input.
+    /// </summary>
+    /// <returns>true if the sprint input is enabled, false otherwise</returns>
     public bool GetSprintInput()
     {
         bool sprint = Input.GetButton(GameConstants.k_Sprint);
@@ -99,6 +117,11 @@ public class PlayerInputHandler : MonoBehaviour
         return sprint;
     }
 
+    /// <summary>
+    /// Returns whether or not the fire input has been pressed within a timeframe.
+    /// </summary>
+    /// <param name="releaseDelay">Amount of time after pressing trigger the fire input is still valid</param>
+    /// <returns>true if the fire down input was held down within release delay, false otherwise</returns>
     public bool GetFireDownInput(float releaseDelay)
     {
         bool fire = Input.GetButtonDown(GameConstants.k_Fire);
@@ -108,16 +131,28 @@ public class PlayerInputHandler : MonoBehaviour
         return fire;
     }
 
+    /// <summary>
+    /// Returns whether or not the fire input is being held down.
+    /// </summary>
+    /// <returns>true if fire input is being held down, false otherwise</returns>
     public bool GetFireInput()
     {
         return Input.GetButton(GameConstants.k_Fire);
     }
 
+    /// <summary>
+    /// Returns whether or not the jump input is being held down.
+    /// </summary>
+    /// <returns>true if the jump input is being held down, false otherwise</returns>
     public bool GetJumpInput()
     {
         return Input.GetButton(GameConstants.k_Jump);
     }
 
+    /// <summary>
+    /// Returns whether or not the crouch input is being held down.
+    /// </summary>
+    /// <returns>true if the crouch input is being held down, false otherwise</returns>
     public bool GetCrouchInput()
     {
         return Input.GetButton(GameConstants.k_Crouch);
