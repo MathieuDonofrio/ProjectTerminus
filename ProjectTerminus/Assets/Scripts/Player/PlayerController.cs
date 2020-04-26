@@ -173,6 +173,8 @@ public class PlayerController : MonoBehaviour
 
     private bool footstepSwitch;
 
+    int a = 0;
+
     private void Start()
     {
         inputHandler = GetComponent<PlayerInputHandler>();
@@ -200,6 +202,8 @@ public class PlayerController : MonoBehaviour
 
         // Post-Movement
         PostMovement();
+
+        // HUD
         UpdateHUD();
 
         // Regeneration
@@ -281,6 +285,8 @@ public class PlayerController : MonoBehaviour
 
             // Record last jump
             lastJumpTime = Time.time;
+
+            hudController.UpdateWave(++a);
         }
 
         // Update transform
@@ -392,7 +398,7 @@ public class PlayerController : MonoBehaviour
         hudController.UpdateHealth(entity.HealthRatio());
 
         // Update crosshair
-        hudController.UpdateCrosshair(0, velocity.magnitude, CrosshairType.REFLEX_SIGHT); // TODO accuracy
+        hudController.UpdateCrosshair(0, velocity.magnitude); // TODO accuracy
     }
 
     private void HandleRegeneration()

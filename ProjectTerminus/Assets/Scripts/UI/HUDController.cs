@@ -20,6 +20,9 @@ public class HUDController : MonoBehaviour
     [Tooltip("Hitmarker UI element")]
     public Hitmarker hitmarker;
 
+    [Tooltip("Wave Number UI element")]
+    public WaveNumber waveNumber;
+
     /* Services */
 
     /// <summary>
@@ -61,5 +64,14 @@ public class HUDController : MonoBehaviour
     {
         // Flag hit
         hitmarker.Hit(kill);
+    }
+
+    /// <summary>
+    /// Updates the wave number 
+    /// </summary>
+    /// <param name="wave">wave number</param>
+    public void UpdateWave(int wave)
+    {
+        waveNumber.UpdateWave(wave);
     }
 }
