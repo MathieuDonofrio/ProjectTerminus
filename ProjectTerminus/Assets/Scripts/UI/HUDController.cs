@@ -11,6 +11,9 @@ public class HUDController : MonoBehaviour
     [Tooltip("Health Bar UI element")]
     public Healthbar healthbar;
 
+    [Tooltip("Blood overlay UI element")]
+    public BloodOverlay bloodOverlay;
+
     [Tooltip("Crosshair UI element")]
     public Crosshair crosshair;
 
@@ -28,7 +31,8 @@ public class HUDController : MonoBehaviour
         // Update health bar
         healthbar.UpdateFill(percentage);
 
-        // TODO update blood overlay
+        // Update blood overlay
+        bloodOverlay.UpdateFill(1 - percentage);
     }
 
     /// <summary>
