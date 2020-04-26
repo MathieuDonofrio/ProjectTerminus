@@ -18,6 +18,9 @@ public class GunHolder : MonoBehaviour
     [Tooltip("If true the gun holder will automatically reload the gun if empty and has available ammo")]
     public bool autoReload = true;
 
+    [Tooltip("If true the gun holder will have unlimited ammo")]
+    public bool unlimitedAmmo = true;
+
     [Tooltip("This number will multiply the gun clip size for")]
     public float amountOfClipsPerRefill = 6;
 
