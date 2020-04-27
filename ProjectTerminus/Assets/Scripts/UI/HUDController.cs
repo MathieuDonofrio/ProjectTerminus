@@ -70,8 +70,10 @@ public class HUDController : MonoBehaviour
     /// Updates the wave number 
     /// </summary>
     /// <param name="wave">wave number</param>
-    public void UpdateWave(int wave)
+    /// <param name="first">if this update is the first wave</param>
+    public void UpdateWave(int wave, bool first = false)
     {
-        waveNumber.UpdateWave(wave);
+        // Update wave
+        waveNumber.UpdateWave(wave, first);
     }
 }

@@ -7,8 +7,11 @@ public class WaveNumber : MonoBehaviour
 {
     /* Configuration */
 
-    [Tooltip("Amount of seconds for the wave change animation to take")]
-    public float animationTime = 4;
+    [Tooltip("Amount of seconds for the transition in animation to compleat")]
+    public float transitionInTime = 4;
+
+    [Tooltip("Amount of seconds for the transition out animation to compleat ")]
+    public float transitionOutTime = 2;
 
     [Tooltip("The text containing the wave number")]
     public Text number;
@@ -28,41 +31,70 @@ public class WaveNumber : MonoBehaviour
 
     private void Start()
     {
-        currentWave = 0;
+        currentWave = targetWave = 0;
+        
         number.text = "0";
     }
 
     private void Update()
     {
-        if(targetWave != currentWave)
+        if (targetWave != currentWave) TransitionOut();
+        if (targetWave == currentWave) TransitionIn();
+    }
+
+    private void TransitionOut()
+    {
+        float alpha = Mathf.Clamp01((Time.time - lastWaveChange) / transitionOutTime);
+
+        number.color = new Color(1, 1, 1, 1 - alpha);
+
+        if (alpha == 1)
         {
             currentWave = targetWave;
 
-            number.text = currentWave.ToString();
+            UpdateText();
+
+            lastWaveChange = Time.time;
         }
+    }
 
-        float sliderValue = Mathf.Clamp01((Time.time - lastWaveChange) / animationTime);
+    private void TransitionIn()
+    {
+        float sliderValue = Mathf.Clamp01((Time.time - lastWaveChange) / transitionInTime);
 
-        if(sliderValue != lastSliderValue)
+        if (sliderValue != lastSliderValue)
         {
             material.SetFloat("_Slider", sliderValue);
 
             lastSliderValue = sliderValue;
         }
+    }
 
+    private void UpdateText()
+    {
+        number.text = currentWave.ToString();
+
+        material.SetFloat("_Slider", 0);
+
+        number.color = new Color(1, 1, 1, 1);
     }
 
     /* Services */
 
-    public void UpdateWave(int wave)
+    public void UpdateWave(int wave, bool skipTransitionOut)
     {
         if(wave != currentWave)
         {
-            number.text = string.Empty;
-
             targetWave = wave;
 
             lastWaveChange = Time.time;
+
+            if (skipTransitionOut)
+            {
+                currentWave = targetWave;
+
+                UpdateText();
+            }
         }
     }
 }
