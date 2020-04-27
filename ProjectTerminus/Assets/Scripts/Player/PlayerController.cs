@@ -174,6 +174,7 @@ public class PlayerController : MonoBehaviour
     private bool footstepSwitch;
 
     int a = 0;
+    int b = 0;
 
     private void Start()
     {
@@ -399,6 +400,13 @@ public class PlayerController : MonoBehaviour
 
         // Update crosshair
         hudController.UpdateCrosshair(0, velocity.magnitude); // TODO accuracy
+
+        // TODO remove
+        if (inputHandler.GetFireDownInput(0f))
+        {
+            b += 50;
+            hudController.UpdateMoney(b, 50);
+        }
     }
 
     private void HandleRegeneration()

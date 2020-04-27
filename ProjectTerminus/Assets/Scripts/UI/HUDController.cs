@@ -23,6 +23,9 @@ public class HUDController : MonoBehaviour
     [Tooltip("Wave Number UI element")]
     public WaveNumber waveNumber;
 
+    [Tooltip("Money UI element")]
+    public Money money;
+
     /* Services */
 
     /// <summary>
@@ -75,5 +78,22 @@ public class HUDController : MonoBehaviour
     {
         // Update wave
         waveNumber.UpdateWave(wave, first);
+    }
+
+    /// <summary>
+    /// Updates the balance and created a effect for added amount if specified.
+    /// </summary>
+    /// <param name="balance">new balance</param>
+    /// <param name="addedEffect">added amount</param>
+    public void UpdateMoney(int balance, int addedEffect = 0)
+    {
+        // Update balance
+        money.UpdateBalance(balance);
+
+        // Spawn particle if needed
+        if(addedEffect != 0)
+        {
+            money.SpawnParticle(addedEffect);
+        }
     }
 }
