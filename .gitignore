@@ -59,5 +59,6 @@ sysinfo.txt
 crashlytics-build.properties
 
 # Test Scene
-TestScene.unity
-TestScene.unity.meta
+[Tt]est[Ss]cene
+[Tt]est[Ss]cene.unity
+[Tt]est[Ss]cene.unity.meta
