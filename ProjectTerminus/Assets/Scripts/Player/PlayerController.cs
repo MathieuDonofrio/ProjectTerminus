@@ -74,6 +74,13 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Physic layers checked to consider the player grounded")]
     public LayerMask groundCheckLayers = -1;
 
+    [Header("Regeneration Settings")]
+    [Tooltip("Amount of time before regenerating after having taken damage")]
+    public float regenDelay = 6;
+
+    [Tooltip("Amount of health per second regained when regenerating")]
+    public float regenAmount = 2;
+
     [Header("Audio Settings")]
     [Tooltip("Amount of footstep sounds played when moving one meter")]
     public float footstepFrequency = 0.5f;
@@ -148,6 +155,8 @@ public class PlayerController : MonoBehaviour
 
     private float lastHeartBeat;
 
+    private float lastDamage;
+
     /* Counters */
 
     private float footstepDistanceCounter;
@@ -164,12 +173,16 @@ public class PlayerController : MonoBehaviour
 
     private bool footstepSwitch;
 
+    int a = 0;
+
     private void Start()
     {
         inputHandler = GetComponent<PlayerInputHandler>();
         entity = GetComponent<Entity>();
         controller = GetComponent<CharacterController>();
         audioSouce = GetComponent<AudioSource>();
+
+        entity.onDamaged += OnDamage;
     }
 
     private void Update()
@@ -189,7 +202,12 @@ public class PlayerController : MonoBehaviour
 
         // Post-Movement
         PostMovement();
+
+        // HUD
         UpdateHUD();
+
+        // Regeneration
+        HandleRegeneration();
 
         // SFX Specific
         FootstepSFX();
@@ -267,6 +285,8 @@ public class PlayerController : MonoBehaviour
 
             // Record last jump
             lastJumpTime = Time.time;
+
+            hudController.UpdateWave(++a, true);
         }
 
         // Update transform
@@ -381,6 +401,14 @@ public class PlayerController : MonoBehaviour
         hudController.UpdateCrosshair(0, velocity.magnitude); // TODO accuracy
     }
 
+    private void HandleRegeneration()
+    {
+        if(Time.time - lastDamage > regenDelay && !entity.FullHealth())
+        {
+            entity.Heal(regenAmount * Time.deltaTime, HealType.REGEN);
+        }
+    }
+
     private void FootstepSFX()
     {
         // Check for footstep
@@ -426,6 +454,11 @@ public class PlayerController : MonoBehaviour
     private void BreathingSFX()
     {
         // TODO
+    }
+
+    private void OnDamage(float damage, GameObject damager, DamageType damageType) 
+    {
+        lastDamage = Time.time;
     }
 
     /* Services */

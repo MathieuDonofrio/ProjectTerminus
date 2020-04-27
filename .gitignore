@@ -58,3 +58,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# Test Scene
+TestScene.unity
+TestScene.unity.meta

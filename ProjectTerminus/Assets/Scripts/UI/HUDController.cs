@@ -11,11 +11,17 @@ public class HUDController : MonoBehaviour
     [Tooltip("Health Bar UI element")]
     public Healthbar healthbar;
 
+    [Tooltip("Blood overlay UI element")]
+    public BloodOverlay bloodOverlay;
+
     [Tooltip("Crosshair UI element")]
     public Crosshair crosshair;
 
     [Tooltip("Hitmarker UI element")]
     public Hitmarker hitmarker;
+
+    [Tooltip("Wave Number UI element")]
+    public WaveNumber waveNumber;
 
     /* Services */
 
@@ -28,7 +34,8 @@ public class HUDController : MonoBehaviour
         // Update health bar
         healthbar.UpdateFill(percentage);
 
-        // TODO update blood overlay
+        // Update blood overlay
+        bloodOverlay.UpdateFill(1 - percentage);
     }
 
     /// <summary>
@@ -57,5 +64,16 @@ public class HUDController : MonoBehaviour
     {
         // Flag hit
         hitmarker.Hit(kill);
+    }
+
+    /// <summary>
+    /// Updates the wave number 
+    /// </summary>
+    /// <param name="wave">wave number</param>
+    /// <param name="first">if this update is the first wave</param>
+    public void UpdateWave(int wave, bool first = false)
+    {
+        // Update wave
+        waveNumber.UpdateWave(wave, first);
     }
 }
