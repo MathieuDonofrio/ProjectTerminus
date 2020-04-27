@@ -1,10 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class ZombieController : MonoBehaviour
 {
     public Camera cam;
+    private NavMeshAgent agent;
+
+    private void Start()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -19,6 +25,8 @@ public class ZombieController : MonoBehaviour
             // We shoot the ray and we gather information about what we hit
             if(Physics.Raycast(ray, out hit))
             {
+                // MOVE OUR AGENT
+                agent.SetDestination(hit.point);
 
             }
 
