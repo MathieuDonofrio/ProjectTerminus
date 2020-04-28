@@ -49,7 +49,7 @@ public class HUDController : MonoBehaviour
     /// </summary>
     /// <param name="accuracy">the held gun accuracy</param>
     /// <param name="movement">the player velocity magnitude</param>
-    /// <param name="hide">if the crosshair needs to be hidden</param>
+    /// <param name="type">the type of crosshair</param>
     public void UpdateCrosshair(float accuracy, float movement, CrosshairType type = CrosshairType.DEFAULT)
     {
         // Get size

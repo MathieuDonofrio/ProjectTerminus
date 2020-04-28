@@ -37,6 +37,9 @@ public class GunController : MonoBehaviour
     public float semiFireDelayModifier = 0.5f;
 
     [Header("Recoil Settings")]
+    [Tooltip("Recoil system used to apply recoil")]
+    public RecoilSystem recoilSystem;
+
     [Tooltip("Amount of spread applied when hipfiring")]
     public float spreadHip = 1;
 
@@ -46,8 +49,11 @@ public class GunController : MonoBehaviour
     [Tooltip("Amount of recoil applied after each shot")]
     public float recoil = 1;
 
-    [Tooltip("How fast the gun will recenter its recoil")]
-    public float centerSpeed = 1;
+    [Tooltip("How fast the gun will apply its recoil in seconds")]
+    public float kickSpeed = 0.05f;
+
+    [Tooltip("How fast the gun will recenter its recoil in seconds")]
+    public float centerSpeed = 0.2f;
 
     [Header("Reload Settings")]
     [Tooltip("The type of reloading mechanisim")]
@@ -201,6 +207,17 @@ public class GunController : MonoBehaviour
     public bool Shoot()
     {
         // TODO
+
+        if(recoilSystem != null)
+        {
+            // TODO make better (Add spray patterns ?)
+
+            // Calculate recoil kick
+            Vector2 kick = Vector2.up * recoil;
+
+            // Apply kick
+            recoilSystem.Kick(kick);
+        }
 
         return true;
     }
