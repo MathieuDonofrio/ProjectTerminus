@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 25ccfed66d72dc14d8ab14e6dc43f6b3
+guid: 34fc80f07205e4840b224ec7f652d621
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable:
   - first:
-      74: -8945691123924629249
-    second: Armature|Idle
+      74: -2823384436706057191
+    second: Armature|basic-attack
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -35,8 +35,8 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Armature|Idle
-      takeName: Armature|Idle
+      name: Armature|basic-attack
+      takeName: Armature|basic-attack
       internalID: 0
       firstFrame: 0
       lastFrame: 30
