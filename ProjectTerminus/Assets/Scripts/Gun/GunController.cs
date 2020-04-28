@@ -11,7 +11,7 @@ public class GunController : MonoBehaviour
 
     [Header("Information")]
     [Tooltip("The name of the weapon")]
-    private string weaponName = "Unknown";
+    public string weaponName = "Unknown";
 
     [Header("Projectile Settings")]
     [Tooltip("The projectile that will be shot from the gun")]
@@ -52,9 +52,6 @@ public class GunController : MonoBehaviour
     [Header("Reload Settings")]
     [Tooltip("The type of reloading mechanisim")]
     public ReloadType reloadType = ReloadType.MAGAZINE;
-
-    [Tooltip("If the gun always has ammo to be reloaded")]
-    public bool unlimitedAmmo = true;
 
     [Tooltip("Amount of time in seconds to reload gun compleately")]
     public float reloadTime = 3f;
@@ -119,10 +116,8 @@ public class GunController : MonoBehaviour
 
     private void Update()
     {
-
         HandleReloading();
         HandleFiring();
-
     }
 
     /* Handlers */
@@ -170,30 +165,31 @@ public class GunController : MonoBehaviour
         {
             if (reloadType == ReloadType.INDIVIDUAL && reloadAmt > 0)
             {
-                individualReloadCounter += Time.deltaTime;
-
-                float reloadFrac = (reloadTime - 0.01f) / maxClipSize;
-
-                while (individualReloadCounter >= reloadFrac)
+                if (!inputHandler.GetFireInput())
                 {
-                    individualReloadCounter -= reloadFrac;
+                    individualReloadCounter += Time.deltaTime;
 
-                    Clip++;
+                    float reloadFrac = (reloadTime - 0.01f) / maxClipSize;
 
-                    reloadAmt--;
+                    while (individualReloadCounter >= reloadFrac)
+                    {
+                        individualReloadCounter -= reloadFrac;
+
+                        Clip++;
+
+                        reloadAmt--;
+                    }
+                }
+                else
+                {
+                    StopReloading();
                 }
             }
 
         }
 
-        // Check clip for reload
-        if (!IsReloading && Clip == 0 && unlimitedAmmo)
-        {
-            Reload(maxClipSize);
-        }
-
         // Finish reloading
-        if (IsReloading && Time.time - lastReload >= reloadTime)
+        if (IsReloading && (reloadAmt == 0 || Time.time - lastReload >= reloadTime))
         {
             FinishReloading();
         }
@@ -256,14 +252,8 @@ public class GunController : MonoBehaviour
         lastReload = Time.time;
     }
 
-    public void FinishReloading()
+    public void StopReloading()
     {
-        // Individual Finalize
-        if (reloadType == ReloadType.INDIVIDUAL) Clip += reloadAmt;
-
-        // Magazine Finalize
-        if (reloadType == ReloadType.MAGAZINE) Clip = reloadAmt;
-
         // Set amount to 0
         reloadAmt = 0;
 
@@ -272,6 +262,14 @@ public class GunController : MonoBehaviour
 
         // Set reloading to false
         IsReloading = false;
+    }
+
+    public void FinishReloading()
+    {
+        // Finalize reload
+        Clip += reloadAmt;
+
+        StopReloading();
     }
 
     public bool CheckFiringConditions()

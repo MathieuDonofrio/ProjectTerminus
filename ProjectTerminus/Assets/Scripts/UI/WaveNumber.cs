@@ -19,9 +19,6 @@ public class WaveNumber : MonoBehaviour
     [Tooltip("The material for the wave number")]
     public Material numberMat;
 
-    [Tooltip("The material for the wave number emission")]
-    public Material emissionMat;
-
     /* State */
 
     private int targetWave;
@@ -43,6 +40,11 @@ public class WaveNumber : MonoBehaviour
     {
         if (targetWave != currentWave) TransitionOut();
         if (targetWave == currentWave) TransitionIn();
+    }
+
+    private void OnDestroy()
+    {
+        numberMat.SetFloat("_Slider", 1);
     }
 
     private void TransitionOut()
@@ -68,7 +70,6 @@ public class WaveNumber : MonoBehaviour
         if (sliderValue != lastSliderValue)
         {
             numberMat.SetFloat("_Slider", sliderValue);
-            emissionMat.SetFloat("_Slider", sliderValue);
 
             lastSliderValue = sliderValue;
         }
@@ -79,7 +80,6 @@ public class WaveNumber : MonoBehaviour
         number.text = currentWave.ToString();
 
         numberMat.SetFloat("_Slider", 0);
-        emissionMat.SetFloat("_Slider", 0);
 
         number.color = new Color(1, 1, 1, 1);
     }

@@ -26,6 +26,9 @@ public class HUDController : MonoBehaviour
     [Tooltip("Money UI element")]
     public Money money;
 
+    [Tooltip("Gun information UI element")]
+    public GunInfo gunInfo;
+
     /* Services */
 
     /// <summary>
@@ -95,5 +98,17 @@ public class HUDController : MonoBehaviour
         {
             money.SpawnParticle(addedEffect);
         }
+    }
+
+    /// <summary>
+    /// Updates the gun information
+    /// </summary>
+    /// <param name="name">the gun name</param>
+    /// <param name="clip">the amount of ammo loaded in the gun</param>
+    /// <param name="totalAmmo">the total amount of ammo for the gun</param>
+    public void UpdateGunInfo(string name, int clip, int totalAmmo)
+    {
+        // Update gun info
+        gunInfo.UpdateGunInfo(name, clip, totalAmmo);
     }
 }

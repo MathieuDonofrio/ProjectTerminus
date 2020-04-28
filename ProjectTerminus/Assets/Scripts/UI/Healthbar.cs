@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Slider))]
 public class Healthbar : MonoBehaviour
 {
     /* Configuration */
@@ -11,12 +10,14 @@ public class Healthbar : MonoBehaviour
     [Tooltip("Determines how fast the health bar fill will interpolate between states")]
     public float sharpness = 6;
 
+    [Tooltip("How long the change effect will last")]
+    public float changeEffectDuration = 1.5f;
+
     [Tooltip("Health bar label")]
     public Text label;
 
-    /* Required Components */
-
-    private Slider slider;
+    [Tooltip("Material for the health bar")]
+    public Material healthBarMat;
 
     /* State */
 
@@ -24,13 +25,19 @@ public class Healthbar : MonoBehaviour
 
     private float targetFill;
 
+    private float lastChange;
+
     private void Start()
     {
-        slider = GetComponent<Slider>();
-
-        if (slider.value != 1) slider.value = 1.0f;
+        healthBarMat.SetFloat("_Health", currentFill);
+        healthBarMat.SetFloat("_Brightness", 0);
     }
 
+    private void OnDestroy()
+    {
+        healthBarMat.SetFloat("_Health", 1);
+        healthBarMat.SetFloat("_Brightness", 0);
+    }
 
     private void LateUpdate()
     {
@@ -38,11 +45,20 @@ public class Healthbar : MonoBehaviour
         {
             currentFill = Mathf.Lerp(currentFill, targetFill, Time.deltaTime * sharpness);
 
-            slider.value = currentFill;
+            healthBarMat.SetFloat("_Health", currentFill);
 
             int percentage = Mathf.RoundToInt(targetFill * 100);
 
             label.text = percentage + "%";
+        }
+
+        float elapsed = Time.time - lastChange;
+
+        if (elapsed <= changeEffectDuration)
+        {
+            float brightness = 1 - Mathf.Clamp01(elapsed / changeEffectDuration);
+
+            healthBarMat.SetFloat("_Brightness", brightness);
         }
     }
 
@@ -50,6 +66,11 @@ public class Healthbar : MonoBehaviour
 
     public void UpdateFill(float fill)
     {
+        if(targetFill != fill)
+        {
+            lastChange = Time.time;
+        }
+
         targetFill = Mathf.Clamp01(fill);
     }
 }

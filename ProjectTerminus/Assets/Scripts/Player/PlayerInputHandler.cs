@@ -158,4 +158,12 @@ public class PlayerInputHandler : MonoBehaviour
         return Input.GetButton(GameConstants.k_Crouch);
     }
 
+    /// <summary>
+    /// Returns whethe or not the reload input is being held down.
+    /// </summary>
+    /// <returns></returns>
+    public bool GetReloadInput()
+    {
+        return Input.GetButton(GameConstants.k_Reload);
+    }
 }

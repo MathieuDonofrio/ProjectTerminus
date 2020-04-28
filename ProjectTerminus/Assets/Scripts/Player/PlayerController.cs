@@ -287,7 +287,7 @@ public class PlayerController : MonoBehaviour
             // Record last jump
             lastJumpTime = Time.time;
 
-            hudController.UpdateWave(++a, true);
+            hudController.UpdateWave(++a, false);
         }
 
         // Update transform
