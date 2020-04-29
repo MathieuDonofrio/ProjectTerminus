@@ -10,13 +10,16 @@ public class SprayPattern : MonoBehaviour
     [Tooltip("Threshold value for recoil bias")]
     public float topThreshold = 0.6f;
 
+    [Tooltip("The bias used to determine y axis direction")]
     public float upBias = 0.5f;
 
+    [Tooltip("Value multiplied to final x axis recoil result")]
     public float xAxisModifer = 0.5f;
 
+    [Tooltip("Value multiplied to final y axis recoil result")]
     public float yAxisModifer = 1.0f;
 
-    [Tooltip("Spray pattern seed")]
+    [Tooltip("Seed used in pseudo random number generators")]
     public int seed;
 
     /* Required Components */
@@ -43,6 +46,9 @@ public class SprayPattern : MonoBehaviour
 
     /* Services */
 
+    /// <summary>
+    /// Computes entire spray pattern and stores it. Called once at start.
+    /// </summary>
     public void ComputeValues()
     {
         System.Random random = new System.Random(seed);
@@ -123,6 +129,11 @@ public class SprayPattern : MonoBehaviour
         }
 	}
 
+    /// <summary>
+    /// Returns the recoil value for the given consecutive shot
+    /// </summary>
+    /// <param name="shot">consecutive shot</param>
+    /// <returns>recoil for consecutive shot</returns>
     public Vector2 getRecoil(int shot)
     {
         return values[Mathf.Clamp(shot, 0, gunController.maxClipSize)];

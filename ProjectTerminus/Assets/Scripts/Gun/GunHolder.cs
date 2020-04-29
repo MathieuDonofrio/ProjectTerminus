@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputHandler))]
+[RequireComponent(typeof(PlayerController))]
 public class GunHolder : MonoBehaviour
 {
     /* Configuration */
@@ -27,9 +28,14 @@ public class GunHolder : MonoBehaviour
     [Tooltip("The HUD controller")]
     public HUDController hudController;
 
+    [Tooltip("The gun container")]
+    public Transform gunContainer;
+
     /* Required Components */
 
     private PlayerInputHandler inputHandler;
+
+    private PlayerController playerController;
 
     /* State */
 
@@ -44,11 +50,17 @@ public class GunHolder : MonoBehaviour
     private void Start()
     {
         inputHandler = GetComponent<PlayerInputHandler>();
+        playerController = GetComponent<PlayerController>();
 
         SetGun(false);
     }
 
-    private void FixedUpdate()
+    private void OnDestroy()
+    {
+        SetGun(false);
+    }
+
+    private void Update()
     {
         GunController held = CurrentHeldGun();
 
@@ -59,15 +71,22 @@ public class GunHolder : MonoBehaviour
                 ReloadHeldGun();
             }
 
-            hudController.UpdateGunInfo(held.name, held.Clip, holdingPrimaryGun
-                ? primaryAmmo : secondaryAmmo);
+            if (hudController != null)
+            {
+                hudController.UpdateGunInfo(held.name, held.Clip, holdingPrimaryGun
+                    ? primaryAmmo : secondaryAmmo);
+
+                hudController.UpdateCrosshair(
+                    held.spreadHip + held.recoil, 
+                    playerController.velocity.magnitude,
+                    CrosshairType.DEFAULT);
+            }
+
         }
         else
         {
             hudController.UpdateGunInfo("Empty Slot", 0, 0);
         }
-
-
     }
 
     /* Services */
@@ -127,6 +146,9 @@ public class GunHolder : MonoBehaviour
         else if (secondaryGun == null) AddGun(gun, false);
         else if (holdingPrimaryGun) AddGun(gun, true);
         else AddGun(gun, false);
+
+        gun.gunHolder = this;
+        gun.transform.parent = gunContainer;
     }
 
     public void AddGun(GunController gun, bool primary)
@@ -177,5 +199,14 @@ public class GunHolder : MonoBehaviour
     public GunController CurrentHeldGun()
     {
         return holdingPrimaryGun ? primaryGun : secondaryGun;
+    }
+
+    /// <summary>
+    /// Returns the normalized direction the gun holder is looking in.
+    /// </summary>
+    /// <returns>normalized look direction</returns>
+    public Vector3 Direction()
+    {
+        return playerController.playerHead.transform.eulerAngles.normalized;
     }
 }

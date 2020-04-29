@@ -392,9 +392,6 @@ public class PlayerController : MonoBehaviour
 
         // Update health
         hudController.UpdateHealth(entity.HealthRatio());
-
-        // Update crosshair
-        hudController.UpdateCrosshair(0, velocity.magnitude); // TODO accuracy
     }
 
     private void HandleRegeneration()

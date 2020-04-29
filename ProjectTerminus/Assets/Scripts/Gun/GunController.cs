@@ -14,9 +14,18 @@ public class GunController : MonoBehaviour
     [Tooltip("The name of the weapon")]
     public string weaponName = "Unknown";
 
+    [Tooltip("The gun holder")]
+    public GunHolder gunHolder;
+
     [Header("Projectile Settings")]
-    [Tooltip("The projectile that will be shot from the gun")]
-    public Projectile projectilePrefrab;
+    [Tooltip("The projectile exit point of the gun")]
+    public Transform exitPoint;
+
+    [Tooltip("The projectile pool for the gun")]
+    public ProjectilePool projectilePool;
+
+    [Tooltip("The speed of the projectile comming out of the gun")]
+    public float projectileSpeed = 100;
 
     [Header("Shoot Settings")]
     [Tooltip("The firing mechanism type of the gun")]
@@ -220,6 +229,9 @@ public class GunController : MonoBehaviour
     public bool Shoot()
     {
         // TODO
+
+        projectilePool.LaunchProjectile(
+            gunHolder.gameObject, exitPoint.transform.position, transform.rotation, projectileSpeed);
 
         return true;
     }
