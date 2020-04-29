@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputHandler))]
+[RequireComponent(typeof(SprayPattern))]
 public class GunController : MonoBehaviour
 {
 
@@ -86,6 +87,8 @@ public class GunController : MonoBehaviour
 
     private PlayerInputHandler inputHandler;
 
+    private SprayPattern sprayPattern;
+
     /* State */
 
     [Header("Debug")]
@@ -114,10 +117,12 @@ public class GunController : MonoBehaviour
 
     public float roundCounter;
 
+    public int consecutiveShotCounter;
 
     private void Start()
     {
         inputHandler = GetComponent<PlayerInputHandler>();
+        sprayPattern = GetComponent<SprayPattern>();
     }
 
     private void Update()
@@ -161,8 +166,16 @@ public class GunController : MonoBehaviour
             }
         }
 
+        if(consecutiveShotCounter > 0 && Time.time - lastShot >= 2 * fireDelay)
+        {
+            consecutiveShotCounter = 0;
+        }
+
         // Stop firing if reloading
-        if (IsReloading) IsFiring = false;
+        if (IsReloading)
+        {
+            IsFiring = false;
+        }
     }
 
     private void HandleReloading()
@@ -208,17 +221,6 @@ public class GunController : MonoBehaviour
     {
         // TODO
 
-        if(recoilSystem != null)
-        {
-            // TODO make better (Add spray patterns ?)
-
-            // Calculate recoil kick
-            Vector2 kick = Vector2.up * recoil;
-
-            // Apply kick
-            recoilSystem.Kick(kick);
-        }
-
         return true;
     }
 
@@ -233,6 +235,18 @@ public class GunController : MonoBehaviour
 
         // Call shoot
         if (Shoot()) Clip--;
+
+        if (recoilSystem != null)
+        {
+            // Calculate recoil kick
+            Vector2 kick = sprayPattern.getRecoil(consecutiveShotCounter) * recoil;
+
+            // Apply kick
+            recoilSystem.Kick(kick);
+        }
+
+        // Increment consecutive shots
+        consecutiveShotCounter++;
 
         // Record last shot
         lastShot = Time.time;
@@ -264,6 +278,9 @@ public class GunController : MonoBehaviour
 
         // Set reload amount
         reloadAmt = Mathf.Min(amount, maxClipSize);
+
+        // Reset consecutive shot counter
+        consecutiveShotCounter = 0;
 
         // Record last reload
         lastReload = Time.time;

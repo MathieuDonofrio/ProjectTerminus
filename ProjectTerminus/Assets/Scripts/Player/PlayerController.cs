@@ -173,9 +173,6 @@ public class PlayerController : MonoBehaviour
 
     private bool footstepSwitch;
 
-    int a = 0;
-    int b = 0;
-
     private void Start()
     {
         inputHandler = GetComponent<PlayerInputHandler>();
@@ -286,8 +283,6 @@ public class PlayerController : MonoBehaviour
 
             // Record last jump
             lastJumpTime = Time.time;
-
-            hudController.UpdateWave(++a, false);
         }
 
         // Update transform
@@ -400,13 +395,6 @@ public class PlayerController : MonoBehaviour
 
         // Update crosshair
         hudController.UpdateCrosshair(0, velocity.magnitude); // TODO accuracy
-
-        // TODO remove
-        if (inputHandler.GetFireDownInput(0f))
-        {
-            b += 50;
-            hudController.UpdateMoney(b, 50);
-        }
     }
 
     private void HandleRegeneration()
@@ -513,6 +501,9 @@ public struct HeadRotation
     public float pitch;
 }
 
+
+#if UNITY_EDITOR
+
 /// <summary>
 /// Custom property drawer to be able to see yaw and pitch inline in inspector (like Vector3)
 /// </summary>
@@ -562,3 +553,4 @@ public class HeadRotationDrawer : PropertyDrawer
 
 }
 
+#endif
