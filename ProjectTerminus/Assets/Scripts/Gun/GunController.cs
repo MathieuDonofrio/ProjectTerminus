@@ -24,6 +24,9 @@ public class GunController : MonoBehaviour
     [Tooltip("The projectile pool for the gun")]
     public ProjectilePool projectilePool;
 
+    [Tooltip("The projectile maximum travel range")]
+    public float range = 100;
+
     [Tooltip("The speed of the projectile comming out of the gun")]
     public float projectileSpeed = 100;
 
@@ -50,10 +53,10 @@ public class GunController : MonoBehaviour
     [Tooltip("Recoil system used to apply recoil")]
     public RecoilSystem recoilSystem;
 
-    [Tooltip("Amount of spread applied when hipfiring")]
-    public float spreadHip = 1;
+    [Tooltip("Amount of angle of spread applied when hipfiring")]
+    public float spreadHip = 20;
 
-    [Tooltip("Amount of spread applied when aiming down sight")]
+    [Tooltip("Amount of angle of spread applied when aiming down sight")]
     public float spreadAim = 0.1f;
 
     [Tooltip("Amount of recoil applied after each shot")]
@@ -228,25 +231,20 @@ public class GunController : MonoBehaviour
 
     public bool Shoot()
     {
-        // TODO
+        float deviationAmount = spreadHip + gunHolder.MovementAccuracy();
 
-        projectilePool.LaunchProjectile(
-            gunHolder.gameObject, exitPoint.transform.position, transform.rotation, projectileSpeed);
+        for (int i = 0; i < projectilesPerShot; i++)
+        {
+            // Calculate deviation
+            Vector3 deviation = Random.onUnitSphere * deviationAmount;
 
-        return true;
-    }
+            // Calculate rotation
+            Quaternion rotation = Quaternion.LookRotation(transform.forward * range + deviation);
 
-    public void Fire()
-    {
-        // Check clip amount
-        if (IsClipEmpty())
-            return;
-
-        // Set firing to true
-        IsFiring = true;
-
-        // Call shoot
-        if (Shoot()) Clip--;
+            // Launch projectile
+            projectilePool.LaunchProjectile(
+                gunHolder.gameObject, exitPoint.transform.position, rotation, range, projectileSpeed);
+        }
 
         if (recoilSystem != null)
         {
@@ -262,6 +260,21 @@ public class GunController : MonoBehaviour
 
         // Record last shot
         lastShot = Time.time;
+
+        return true;
+    }
+
+    public void Fire()
+    {
+        // Check clip amount
+        if (IsClipEmpty())
+            return;
+
+        // Set firing to true
+        IsFiring = true;
+
+        // Call shoot
+        if (Shoot()) Clip--;
     }
 
     public void FinishFiring()

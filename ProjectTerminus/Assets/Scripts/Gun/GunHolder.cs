@@ -8,6 +8,10 @@ public class GunHolder : MonoBehaviour
 {
     /* Configuration */
 
+    [Header("Accuracy")]
+    [Tooltip("How much the movement affects the accuracy")]
+    public float movementAccuracy = 2;
+
     [Header("Loadout")]
     [Tooltip("Main gun for gunholder")]
     public GunController primaryGun;
@@ -77,9 +81,7 @@ public class GunHolder : MonoBehaviour
                     ? primaryAmmo : secondaryAmmo);
 
                 hudController.UpdateCrosshair(
-                    held.spreadHip + held.recoil, 
-                    playerController.velocity.magnitude,
-                    CrosshairType.DEFAULT);
+                    held.spreadHip + held.recoil, MovementAccuracy(), CrosshairType.DEFAULT);
             }
 
         }
@@ -202,11 +204,11 @@ public class GunHolder : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns the normalized direction the gun holder is looking in.
+    /// Returns the movement accuracy of the gun holder
     /// </summary>
     /// <returns>normalized look direction</returns>
-    public Vector3 Direction()
+    public float MovementAccuracy()
     {
-        return playerController.playerHead.transform.eulerAngles.normalized;
+        return playerController.velocity.magnitude / playerController.movementSpeed * movementAccuracy;
     }
 }

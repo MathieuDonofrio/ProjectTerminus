@@ -185,7 +185,10 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+
+#if UNITY_EDITOR
         Profiler.BeginSample("PlayerControllerUpdate");
+#endif
 
         // State
         IsSprinting = inputHandler.GetSprintInput();
@@ -212,7 +215,9 @@ public class PlayerController : MonoBehaviour
         BreathingSFX();
         HeartbeatSFX();
 
+#if UNITY_EDITOR
         Profiler.EndSample();
+#endif
     }
 
     /* Handlers */

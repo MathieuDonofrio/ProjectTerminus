@@ -34,7 +34,7 @@ public class RecoilSystem : MonoBehaviour
         {
             float speed = centering ? lastCenterSpeed : lastKickSpeed;
 
-            Vector2 movement = Vector2.SqrMagnitude(add) < 0.01f ? add : add * Time.deltaTime / speed;
+            Vector2 movement = add.magnitude < 0.01f ? add : add * Time.deltaTime / speed;
 
             add -= movement;
             sum += movement;

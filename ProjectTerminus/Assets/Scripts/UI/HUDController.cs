@@ -53,7 +53,7 @@ public class HUDController : MonoBehaviour
     public void UpdateCrosshair(float accuracy, float movement, CrosshairType type = CrosshairType.DEFAULT)
     {
         // Get size
-        float size = accuracy + Mathf.Abs(movement) * 2;
+        float size = Mathf.Abs(accuracy) * (1 + Mathf.Abs(movement));
 
         // Update crosshair size
         crosshair.UpdateSize(size);

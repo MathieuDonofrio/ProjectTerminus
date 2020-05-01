@@ -58,8 +58,12 @@ public class SprayPattern : MonoBehaviour
         // New array
 		values = new Vector2[max];
 
+        // Offsets
+        float offx = (float) random.NextDouble();
+        float offy = (float) random.NextDouble();
+
         // X axis frequencies
-		float xf1 = (float) random.NextDouble() * 0.2f + 0.2f;
+        float xf1 = (float) random.NextDouble() * 0.2f + 0.2f;
 		float xf2 = (float) random.NextDouble() * 0.06f + 0.02f;
 
         // Y axis frequencies
@@ -81,8 +85,8 @@ public class SprayPattern : MonoBehaviour
             bool threashhold = i < stateSwitchShot;
 
             // Gradient noise
-            float x = PerlinNoise.Noise(i * (threashhold ? xf1 : xf2), seed);
-            float y = PerlinNoise.Noise(i * (threashhold ? yf1 : yf2), seed);
+            float x = PerlinNoise.Noise(offx + i * (threashhold ? xf1 : xf2), seed + 1);
+            float y = PerlinNoise.Noise(offy + i * (threashhold ? yf1 : yf2), seed + 3);
 
             // More noise 
             x *= 1 + 0.5f * (float) random.NextDouble();

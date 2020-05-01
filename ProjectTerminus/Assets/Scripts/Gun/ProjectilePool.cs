@@ -9,19 +9,55 @@ public class ProjectilePool : MonoBehaviour
     [Tooltip("Projectile prefab used for instanciation")]
     public Projectile projectilePrefab;
 
+    [Tooltip("The bullethole prefab used for instanciation")]
+    public BulletHole bulletHolePrefab;
+
+    [Tooltip("The amount of projectiles to pre instanciate")]
+    public float preInstanciatedProjectiles = 8;
+
+    [Tooltip("The amount of bullet holes to pre instanciate")]
+    public float preInstanciatedBulletHoles = 18;
+
+    [Tooltip("The amount of time a bullet hole stays active")]
+    public float bulletHoleDuration = 4;
+
     /* State */
 
     private Queue<Projectile> projectiles;
 
+    private Queue<BulletHole> bulletHoles;
+
     private void Start()
     {
-        projectiles = new Queue<Projectile>();
-    }
+        if(projectilePrefab != null)
+        {
+            projectiles = new Queue<Projectile>();
+
+            for (int i = 0; i < preInstanciatedProjectiles; i++)
+            {
+                CheckIn(Instantiate(projectilePrefab, transform));
+            }
+
+        }
+
+        if (bulletHolePrefab != null)
+        {
+            bulletHoles = new Queue<BulletHole>();
+
+            for (int i = 0; i < preInstanciatedBulletHoles; i++)
+            {
+                CheckIn(Instantiate(bulletHolePrefab, transform));
+            }
+        }
+    } 
 
     /* Services */
 
-    public void LaunchProjectile(GameObject shooter, Vector3 position, Quaternion rotation, float speed)
+    public void LaunchProjectile(GameObject shooter, Vector3 position, Quaternion rotation, float range, float speed)
     {
+        if (projectilePrefab == null)
+            return;
+
         Projectile projectile;
 
         if(projectiles.Count > 0)
@@ -32,27 +68,57 @@ public class ProjectilePool : MonoBehaviour
             projectile.transform.rotation = rotation;
 
             projectile.gameObject.SetActive(true);
-
         }
         else
         {
-            projectile = Instantiate(projectilePrefab, position, rotation);
-
-            projectile.transform.parent = transform;
+            projectile = Instantiate(projectilePrefab, position, rotation, transform);
         }
 
-        projectile.StartLaunch(shooter, this, speed);
+        projectile.StartLaunch(shooter, this, -1, range, speed);
+    }
 
-        //Debug.DrawRay(projectile.transform.position, projectile.transform.forward, Color.red, 10f);
+    public void SpawnBulletHole(Vector3 position, Quaternion rotation)
+    {
+        if (bulletHolePrefab == null)
+            return;
 
+        BulletHole bulletHole;
+
+        if(bulletHoles.Count > 0)
+        {
+            bulletHole = bulletHoles.Dequeue();
+
+            bulletHole.transform.position = position;
+            bulletHole.transform.rotation = rotation;
+
+            bulletHole.gameObject.SetActive(true);
+        }
+        else
+        {
+            bulletHole = Instantiate(bulletHolePrefab, position, rotation, transform);
+        }
+
+        bulletHole.Spawn(this);
     }
 
     public void CheckIn(Projectile projectile)
     {
-        projectile.FinishLaunch();
+        if (projectilePrefab == null)
+            return;
 
         projectile.gameObject.SetActive(false);
 
         projectiles.Enqueue(projectile);
     }
+
+    public void CheckIn(BulletHole bulletHole)
+    {
+        if (bulletHolePrefab == null)
+            return;
+
+        bulletHole.gameObject.SetActive(false);
+
+        bulletHoles.Enqueue(bulletHole);
+    }
+
 }

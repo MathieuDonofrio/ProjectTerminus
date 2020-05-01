@@ -45,3 +45,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 4979815462326776417, guid: ae386f079b141034ebc84e20b1192d72,
     type: 3}
+  bulletHolePrefab: {fileID: 1711840908241858799, guid: f9deb2f3d19fd514191cf17cb4493c61,
+    type: 3}
+  preInstanciatedProjectiles: 8
+  preInstanciatedBulletHoles: 18
+  bulletHoleDuration: 5
