@@ -12,11 +12,13 @@ public class ZombieController : MonoBehaviour
     private bool attacking = false;
     public Transform playerTransform;
     private bool dead = false;
+    private float initialSpeed;
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         zombieAnimator = GetComponent<Animator>();
+        initialSpeed = agent.speed;
     }
 
     // Update is called once per frame
@@ -32,6 +34,7 @@ public class ZombieController : MonoBehaviour
 
             // MOVE OUR AGENT
             agent.isStopped = false;
+
             agent.SetDestination(playerTransform.position);
 
 
@@ -41,12 +44,14 @@ public class ZombieController : MonoBehaviour
                 //Set the animations
                 walking = true;
                 attacking = false;
+                agent.speed = initialSpeed;
 
             }
             else
             {
                 walking = false;
                 attacking = true;
+                agent.speed = 0;
                 Debug.Log("Im supposed to be attacking");
             }
             zombieAnimator.SetBool("walking", walking);
@@ -54,12 +59,12 @@ public class ZombieController : MonoBehaviour
 
             //Make the character rotate
             var dirVector = playerTransform.position - transform.position;
-            transform.rotation = Quaternion.Slerp
-            (transform.rotation, Quaternion.LookRotation(dirVector), rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dirVector), rotationSpeed * Time.deltaTime);
         }
         else
         {
-            agent.isStopped = true;
+            //stop moving the character this is for test purposes
+            agent.isStopped = dead;
             walking = false;
             attacking = false;
             zombieAnimator.SetBool("walking", walking);
