@@ -20,7 +20,7 @@ public class Money : MonoBehaviour
 
     private float lastParticleTime;
 
-    private void Update()
+    private void LateUpdate()
     {
         float elapsed = Time.time - lastParticleTime;
 

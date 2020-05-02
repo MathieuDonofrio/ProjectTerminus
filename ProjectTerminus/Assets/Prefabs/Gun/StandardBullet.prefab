@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 4972676935502284092}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2744059767531904353}
   m_Father: {fileID: 0}
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced0296c876f7b6458825f46055d278c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minVisibleDistance: 0.5
+  minVisibleDistance: 0.1
   projectileRenderer: {fileID: 2758759336110125127}
 --- !u!1001 &2745558705860832851
 PrefabInstance:
@@ -106,7 +106,8 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 21bbe85bcdc01ef46a306ced9b359c27, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 95822774495869806, guid: 2298236a23b5c4349b5f8204068aadf3, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2298236a23b5c4349b5f8204068aadf3, type: 3}
 --- !u!4 &2744059767531904353 stripped
 Transform:

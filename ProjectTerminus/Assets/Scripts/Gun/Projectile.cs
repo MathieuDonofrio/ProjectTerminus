@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public class Projectile : MonoBehaviour
 {
     /* Configuration */
 
     [Tooltip("Minimum distance this projectile will be visible")]
-    public float minVisibleDistance = 1;
+    public float minVisibleDistance = 0.5f;
 
     [Tooltip("The renderer of the projectile")]
     public Renderer projectileRenderer;
@@ -16,7 +17,7 @@ public class Projectile : MonoBehaviour
 
     private GameObject shooter;
 
-    private ProjectilePool pool;
+    private ProjectileHandler pool;
 
     private LayerMask collisionLayer;
 
@@ -47,20 +48,32 @@ public class Projectile : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(Physics.Linecast(lastPosition, transform.position,
+
+#if UNITY_EDITOR
+        Profiler.BeginSample("ProjectileFixedUpdate");
+#endif
+
+        if (Physics.Linecast(lastPosition, transform.position,
             out RaycastHit hit, collisionLayer, QueryTriggerInteraction.Collide))
         {
+            // TODO damage entity
+
             pool.SpawnBulletHole(hit.point, Quaternion.LookRotation(hit.normal));
 
             Kill();
         }
 
         lastPosition = transform.position;
+
+#if UNITY_EDITOR
+        Profiler.EndSample();
+#endif
+
     }
 
     /* Services */
 
-    public void StartLaunch(GameObject shooter, ProjectilePool pool, LayerMask collisionLayer, float range, float speed)
+    public void StartLaunch(GameObject shooter, ProjectileHandler pool, Vector3 rayStart, LayerMask collisionLayer, float range, float speed)
     {
         this.shooter = shooter;
         this.pool = pool;
@@ -68,8 +81,8 @@ public class Projectile : MonoBehaviour
         this.range = range;
         this.speed = speed;
 
+        lastPosition = rayStart;
         distanceTraveled = 0;
-        lastPosition = transform.position;
         projectileRenderer.enabled = false;
     }
 

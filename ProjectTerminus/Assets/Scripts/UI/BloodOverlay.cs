@@ -27,7 +27,7 @@ public class BloodOverlay : MonoBehaviour
         blood = GetComponent<Image>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         if(currentFill != targetFill)
         {

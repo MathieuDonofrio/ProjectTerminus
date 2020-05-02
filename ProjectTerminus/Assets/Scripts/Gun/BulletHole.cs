@@ -7,7 +7,7 @@ public class BulletHole : MonoBehaviour
 
     /* State */
 
-    private ProjectilePool pool;
+    private ProjectileHandler pool;
 
     private float startTime;
 
@@ -18,7 +18,7 @@ public class BulletHole : MonoBehaviour
 
     /* Services */
 
-    public void Spawn(ProjectilePool pool)
+    public void Spawn(ProjectileHandler pool)
     {
         this.pool = pool;
 

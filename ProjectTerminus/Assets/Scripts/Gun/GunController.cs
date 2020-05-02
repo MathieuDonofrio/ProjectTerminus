@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 [RequireComponent(typeof(PlayerInputHandler))]
 [RequireComponent(typeof(SprayPattern))]
@@ -18,11 +18,17 @@ public class GunController : MonoBehaviour
     public GunHolder gunHolder;
 
     [Header("Projectile Settings")]
+    [Tooltip("The projectile pool for the gun")]
+    public ProjectileHandler projectilePool;
+
     [Tooltip("The projectile exit point of the gun")]
     public Transform exitPoint;
 
-    [Tooltip("The projectile pool for the gun")]
-    public ProjectilePool projectilePool;
+    [Tooltip("How far from the exit point the projectile will spawn")]
+    public float exitOffset = 0.2f;
+
+    [Tooltip("How far into the exit point the projectile start its first raycast")]
+    public float raycastOffset = 0.4f;
 
     [Tooltip("The projectile maximum travel range")]
     public float range = 100;
@@ -137,10 +143,18 @@ public class GunController : MonoBehaviour
         sprayPattern = GetComponent<SprayPattern>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
+#if UNITY_EDITOR
+        Profiler.BeginSample("GunControllerLateUpdate");
+#endif
+
         HandleReloading();
         HandleFiring();
+
+#if UNITY_EDITOR
+        Profiler.EndSample();
+#endif
     }
 
     /* Handlers */
@@ -229,22 +243,8 @@ public class GunController : MonoBehaviour
 
     /* Services */
 
-    public bool Shoot()
+    public void Shoot()
     {
-        float deviationAmount = spreadHip + gunHolder.MovementAccuracy();
-
-        for (int i = 0; i < projectilesPerShot; i++)
-        {
-            // Calculate deviation
-            Vector3 deviation = Random.onUnitSphere * deviationAmount;
-
-            // Calculate rotation
-            Quaternion rotation = Quaternion.LookRotation(transform.forward * range + deviation);
-
-            // Launch projectile
-            projectilePool.LaunchProjectile(
-                gunHolder.gameObject, exitPoint.transform.position, rotation, range, projectileSpeed);
-        }
 
         if (recoilSystem != null)
         {
@@ -255,13 +255,39 @@ public class GunController : MonoBehaviour
             recoilSystem.Kick(kick);
         }
 
+        // Calculate ray start
+        Vector3 rayStart = exitPoint.position - exitPoint.transform.forward * raycastOffset;
+
+        // Calculate position
+        Vector3 position = exitPoint.position + exitPoint.transform.forward * exitOffset;
+
+        // Calculate ranged direction
+        Vector3 rangedDirection = transform.forward * range;
+
+        // Calculate deviation amount
+        float deviationAmount = spreadHip + gunHolder.MovementAccuracy();
+
+        for (int i = 0; i < projectilesPerShot; i++)
+        {
+            // Calculate random deviation
+            Vector3 deviation = Random.onUnitSphere * deviationAmount;
+
+            // Calculate rotation
+            Quaternion rotation = Quaternion.LookRotation(rangedDirection + deviation);
+
+            // Launch projectile
+            projectilePool.LaunchProjectile(
+                gunHolder.gameObject, rayStart, position, rotation, range, projectileSpeed);
+        }
+
+        // Spawn muzzle flash
+        projectilePool.SpawnMuzzleFlash(position, transform.eulerAngles);
+
         // Increment consecutive shots
         consecutiveShotCounter++;
 
         // Record last shot
         lastShot = Time.time;
-
-        return true;
     }
 
     public void Fire()
@@ -274,7 +300,10 @@ public class GunController : MonoBehaviour
         IsFiring = true;
 
         // Call shoot
-        if (Shoot()) Clip--;
+        Shoot();
+
+        // Decrement clip
+        Clip--;
     }
 
     public void FinishFiring()

@@ -24,39 +24,37 @@ public class MoneyParticle : MonoBehaviour
 
     /* State */
 
-    public MoneyParticleSystem MoneyParticleSystem { get; set; }
+    private MoneyParticleSystem moneyParticleSystem;
+
+    private Vector3 velocity;
 
     private float lastStart;
-
-    private Vector2 velocity;
 
     private void Update()
     {
         if(Time.time - lastStart <= duration)
         {
-            transform.Translate(velocity * Time.deltaTime);
+            transform.position += velocity * Time.deltaTime;
         }
         else
         {
-            Finished();
+            Kill();
         }
     }
 
     /* Services */
 
-    public void StartParticle(Vector2 position, int amount)
+    public void StartParticle(MoneyParticleSystem moneyParticleSystem, int amount)
     {
-        transform.position = position;
+        this.moneyParticleSystem = moneyParticleSystem;
 
-        float y = 0;
+        float y = Random.value;
 
         if(amount > 0)
         {
             moneyText.text = "+" + amount;
 
             moneyText.color = gainMoneyColor;
-
-            y = Random.value;
         }
         else
         {
@@ -64,7 +62,7 @@ public class MoneyParticle : MonoBehaviour
 
             moneyText.color = loseMoneyColor;
 
-            y = -Random.value;
+            y *= -1;
         }
 
         velocity = new Vector2(1.5f, y).normalized * speed;
@@ -72,11 +70,15 @@ public class MoneyParticle : MonoBehaviour
         lastStart = Time.time;
     }
 
-    public void Finished()
+    public void Kill()
     {
-        if(MoneyParticleSystem != null)
+        if(moneyParticleSystem == null)
         {
-            MoneyParticleSystem.CheckIn(this);
+            Destroy(this);
+        }
+        else
+        {
+            moneyParticleSystem.CheckIn(this);
         }
     }
 

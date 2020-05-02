@@ -671,13 +671,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5acf8eb57ee448d4f983e0dce616bfcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gunContainer: {fileID: 0}
+  movementAccuracy: 2
   primaryGun: {fileID: 0}
   secondaryGun: {fileID: 2085467500389364685}
   autoReload: 1
   unlimitedAmmo: 1
   amountOfClipsPerRefill: 6
   hudController: {fileID: 2085467499748268045}
-  gunContainer: {fileID: 0}
   holdingPrimaryGun: 0
   primaryAmmo: 0
   secondaryAmmo: 0
@@ -3634,8 +3635,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Test Gun
   gunHolder: {fileID: 2085467498795359528}
-  exitPoint: {fileID: 2080855646046730919}
   projectilePool: {fileID: 0}
+  exitPoint: {fileID: 2080855646046730919}
+  exitOffset: 0.2
+  raycastOffset: 0.2
+  range: 100
   projectileSpeed: 100
   firingType: 0
   projectilesPerShot: 1

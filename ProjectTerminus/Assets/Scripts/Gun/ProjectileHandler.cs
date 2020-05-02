@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectilePool : MonoBehaviour
+public class ProjectileHandler : MonoBehaviour
 {
     /* Configuration */
 
@@ -11,6 +11,9 @@ public class ProjectilePool : MonoBehaviour
 
     [Tooltip("The bullethole prefab used for instanciation")]
     public BulletHole bulletHolePrefab;
+
+    [Tooltip("The particle system used for muzzle flash effects")]
+    public ParticleSystem muzzleFlashParticleSystem;
 
     [Tooltip("The amount of projectiles to pre instanciate")]
     public float preInstanciatedProjectiles = 8;
@@ -53,7 +56,7 @@ public class ProjectilePool : MonoBehaviour
 
     /* Services */
 
-    public void LaunchProjectile(GameObject shooter, Vector3 position, Quaternion rotation, float range, float speed)
+    public void LaunchProjectile(GameObject shooter, Vector3 rayStart, Vector3 position, Quaternion rotation, float range, float speed)
     {
         if (projectilePrefab == null)
             return;
@@ -74,7 +77,7 @@ public class ProjectilePool : MonoBehaviour
             projectile = Instantiate(projectilePrefab, position, rotation, transform);
         }
 
-        projectile.StartLaunch(shooter, this, -1, range, speed);
+        projectile.StartLaunch(shooter, this, rayStart, -1, range, speed);
     }
 
     public void SpawnBulletHole(Vector3 position, Quaternion rotation)
@@ -99,6 +102,16 @@ public class ProjectilePool : MonoBehaviour
         }
 
         bulletHole.Spawn(this);
+    }
+
+    public void SpawnMuzzleFlash(Vector3 position, Vector3 rotation)
+    {
+        var emitParams = new ParticleSystem.EmitParams();
+
+        emitParams.position = position;
+        emitParams.rotation3D = rotation + new Vector3(90, 0, 0);
+
+        muzzleFlashParticleSystem.Emit(emitParams, 1);
     }
 
     public void CheckIn(Projectile projectile)

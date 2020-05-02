@@ -36,7 +36,7 @@ public class WaveNumber : MonoBehaviour
         number.text = "0";
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         if (targetWave != currentWave) TransitionOut();
         if (targetWave == currentWave) TransitionIn();

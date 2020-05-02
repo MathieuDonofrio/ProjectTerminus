@@ -27,7 +27,7 @@ public class Hitmarker : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if(Time.time - lastHit < duration)
         {

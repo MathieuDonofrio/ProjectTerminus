@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.UIElements;
@@ -204,9 +202,6 @@ public class PlayerController : MonoBehaviour
         // Post-Movement
         PostMovement();
 
-        // HUD
-        UpdateHUD();
-
         // Regeneration
         HandleRegeneration();
 
@@ -218,6 +213,12 @@ public class PlayerController : MonoBehaviour
 #if UNITY_EDITOR
         Profiler.EndSample();
 #endif
+    }
+
+    private void LateUpdate()
+    {
+        // HUD
+        UpdateHUD();
     }
 
     /* Handlers */
@@ -506,53 +507,56 @@ public struct HeadRotation
 
 #if UNITY_EDITOR
 
-/// <summary>
-/// Custom property drawer to be able to see yaw and pitch inline in inspector (like Vector3)
-/// </summary>
-[CustomPropertyDrawer(typeof(HeadRotation))]
-public class HeadRotationDrawer : PropertyDrawer
+namespace UnityEditor
 {
-
-    // Draw the property inside the given rect
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    /// <summary>
+    /// Custom property drawer to be able to see yaw and pitch inline in inspector (like Vector3)
+    /// </summary>
+    [CustomPropertyDrawer(typeof(HeadRotation))]
+    public class HeadRotationDrawer : PropertyDrawer
     {
-        EditorGUI.BeginProperty(position, label, property);
 
-        // Draw label
-        position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+        // Draw the property inside the given rect
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
 
-        // Don't make child fields be indented
-        var indent = EditorGUI.indentLevel;
-        EditorGUI.indentLevel = 0;
+            // Draw label
+            position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
-        float yawLabelSize = 30;
-        float pitchLabelSize = 35;
+            // Don't make child fields be indented
+            var indent = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
 
-        float spacingSize = 5;
-        float remainingSize = position.width - yawLabelSize - pitchLabelSize - spacingSize;
-        float boxSize = remainingSize * 0.498f;
+            float yawLabelSize = 30;
+            float pitchLabelSize = 35;
 
-        float offset = 0;
+            float spacingSize = 5;
+            float remainingSize = position.width - yawLabelSize - pitchLabelSize - spacingSize;
+            float boxSize = remainingSize * 0.498f;
 
-        var yawLabelRect = new Rect(position.x + offset, position.y, yawLabelSize, position.height);
-        offset += yawLabelSize;
-        var yawRect = new Rect(position.x + offset, position.y, boxSize, position.height);
-        offset += boxSize + spacingSize;
-        var pitchLabelRect = new Rect(position.x + offset, position.y, pitchLabelSize, position.height);
-        offset += pitchLabelSize;
-        var pitchRect = new Rect(position.x + offset, position.y, boxSize, position.height);
+            float offset = 0;
 
-        EditorGUI.LabelField(yawLabelRect, "Yaw");
-        EditorGUI.PropertyField(yawRect, property.FindPropertyRelative("yaw"), GUIContent.none);
-        EditorGUI.LabelField(pitchLabelRect, "Pitch");
-        EditorGUI.PropertyField(pitchRect, property.FindPropertyRelative("pitch"), GUIContent.none);
+            var yawLabelRect = new Rect(position.x + offset, position.y, yawLabelSize, position.height);
+            offset += yawLabelSize;
+            var yawRect = new Rect(position.x + offset, position.y, boxSize, position.height);
+            offset += boxSize + spacingSize;
+            var pitchLabelRect = new Rect(position.x + offset, position.y, pitchLabelSize, position.height);
+            offset += pitchLabelSize;
+            var pitchRect = new Rect(position.x + offset, position.y, boxSize, position.height);
 
-        // Set indent back to what it was
-        EditorGUI.indentLevel = indent;
+            EditorGUI.LabelField(yawLabelRect, "Yaw");
+            EditorGUI.PropertyField(yawRect, property.FindPropertyRelative("yaw"), GUIContent.none);
+            EditorGUI.LabelField(pitchLabelRect, "Pitch");
+            EditorGUI.PropertyField(pitchRect, property.FindPropertyRelative("pitch"), GUIContent.none);
 
-        EditorGUI.EndProperty();
+            // Set indent back to what it was
+            EditorGUI.indentLevel = indent;
+
+            EditorGUI.EndProperty();
+        }
+
     }
-
 }
 
 #endif

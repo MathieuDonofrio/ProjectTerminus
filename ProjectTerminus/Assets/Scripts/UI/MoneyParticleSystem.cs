@@ -19,22 +19,22 @@ public class MoneyParticleSystem : MonoBehaviour
     {
         MoneyParticle particle;
 
+        position += Vector2.right * 60;
+
         if (pool.Count > 0)
         {
             particle = pool.Dequeue();
+
+            particle.transform.position = position;
 
             particle.gameObject.SetActive(true);
         }
         else
         {
-            particle = Instantiate(particlePrefab);
-
-            particle.transform.SetParent(transform);
-
-            particle.MoneyParticleSystem = this;
+            particle = Instantiate(particlePrefab, position, Quaternion.identity, transform);
         }
 
-        particle.StartParticle(position + Vector2.right * 60, amount);
+        particle.StartParticle(this, amount);
     }
 
     public void CheckIn(MoneyParticle particle) 

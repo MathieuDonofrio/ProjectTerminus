@@ -14,7 +14,7 @@ public class GunInfo : MonoBehaviour
 
     public void UpdateGunInfo(string gunName, int clip, int ammo)
     {
-        if(gunAmmoText.text != gunName) gunNameText.text = gunName;
+        if(gunNameText.text != gunName) gunNameText.text = gunName;
 
         string ammoInfo = clip + " | " + ammo;
 

@@ -41,7 +41,7 @@ public class Healthbar : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (currentFill != targetFill)
+        if (currentFill < targetFill)
         {
             currentFill = Mathf.Lerp(currentFill, targetFill, Time.deltaTime * sharpness);
 
@@ -66,11 +66,13 @@ public class Healthbar : MonoBehaviour
 
     public void UpdateFill(float fill)
     {
+        fill = Mathf.Clamp01(fill);
+
         if(targetFill != fill)
         {
+            targetFill = fill;
+
             lastChange = Time.time;
         }
-
-        targetFill = Mathf.Clamp01(fill);
     }
 }

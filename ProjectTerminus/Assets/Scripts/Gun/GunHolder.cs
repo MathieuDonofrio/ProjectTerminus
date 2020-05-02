@@ -8,6 +8,9 @@ public class GunHolder : MonoBehaviour
 {
     /* Configuration */
 
+    [Tooltip("The gun container")]
+    public Transform gunContainer;
+
     [Header("Accuracy")]
     [Tooltip("How much the movement affects the accuracy")]
     public float movementAccuracy = 2;
@@ -29,11 +32,9 @@ public class GunHolder : MonoBehaviour
     [Tooltip("This number will multiply the gun clip size for")]
     public float amountOfClipsPerRefill = 6;
 
+    [Header("HUD")]
     [Tooltip("The HUD controller")]
     public HUDController hudController;
-
-    [Tooltip("The gun container")]
-    public Transform gunContainer;
 
     /* Required Components */
 
@@ -66,14 +67,33 @@ public class GunHolder : MonoBehaviour
 
     private void Update()
     {
+        UpdateReloading();
+    }
+
+    private void LateUpdate()
+    {
+        UpdateHud();
+    }
+
+    private void UpdateReloading()
+    {
         GunController held = CurrentHeldGun();
 
-        if (held != null)
+        if(held != null)
         {
             if (!held.IsReloading && inputHandler.GetReloadInput() || (held.IsClipEmpty() && autoReload))
             {
                 ReloadHeldGun();
             }
+        }
+    }
+
+    private void UpdateHud()
+    {
+        GunController held = CurrentHeldGun();
+
+        if (held != null)
+        {
 
             if (hudController != null)
             {
@@ -211,4 +231,5 @@ public class GunHolder : MonoBehaviour
     {
         return playerController.velocity.magnitude / playerController.movementSpeed * movementAccuracy;
     }
+
 }
