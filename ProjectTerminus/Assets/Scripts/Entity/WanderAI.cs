@@ -10,7 +10,6 @@ public class WanderAI : MonoBehaviour
     public float rotSpeed = 100f;
 
     private bool isWandering = false;
-    private bool isRotatingLeft = false;
     private bool isRotatingRight = false;
     private bool isWalking = false;
 
@@ -35,7 +34,7 @@ public class WanderAI : MonoBehaviour
         {
             transform.Rotate(transform.up * Time.deltaTime * rotSpeed);
         }
-        if (isRotatingLeft)
+        if (!isRotatingRight)
         {
             transform.Rotate(transform.up * Time.deltaTime * -rotSpeed);
         }
@@ -43,6 +42,8 @@ public class WanderAI : MonoBehaviour
         {
             transform.position += transform.forward * moveSpeed * Time.deltaTime;
         }
+
+        //Set animation
         zombieAnimator.SetBool("walking", isWalking);
     }
 
@@ -72,9 +73,9 @@ public class WanderAI : MonoBehaviour
 
         if (rotateLorR == 2)
         {
-            isRotatingLeft = true;
+            isRotatingRight = false;
             yield return new WaitForSeconds(rotTime);
-            isRotatingLeft = false;
+            isRotatingRight = true;
         }
         isWandering = false;
     }

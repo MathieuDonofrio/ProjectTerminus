@@ -58,7 +58,7 @@ public class ZombieController : MonoBehaviour
             zombieAnimator.SetBool("attacking", attacking);
 
             //Make the character rotate
-            var dirVector = playerTransform.position - transform.position;
+            var dirVector = (playerTransform.position - transform.position).normalized;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dirVector), rotationSpeed * Time.deltaTime);
         }
         else
