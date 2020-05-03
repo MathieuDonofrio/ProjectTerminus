@@ -7,51 +7,74 @@ public class ZombieController : MonoBehaviour
 {
     private NavMeshAgent agent;
     private int rotationSpeed = 10;
-    private Animator basicZombieAnimator;
+    private Animator zombieAnimator;
     private bool walking = false;
     private bool attacking = false;
     public Transform playerTransform;
+    private bool dead = false;
+    private float initialSpeed;
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        basicZombieAnimator = GetComponent<Animator>();
+        zombieAnimator = GetComponent<Animator>();
+        initialSpeed = agent.speed;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-
-
-        // MOVE OUR AGENT
-        agent.SetDestination(playerTransform.position);
-
-
-        //executing an action depending on if our player is moving
-        if (IsMoving())
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            //Set the animations
-            walking = true;
-            attacking = false;
+            dead = !dead;
+        }
+
+        if (!dead)
+        {
+
+            // MOVE OUR AGENT
+            agent.isStopped = false;
+
+            agent.SetDestination(playerTransform.position);
+
+
+            //executing an action depending on if our player is moving
+            if (IsWithinStoppingDistance())
+            {
+                //Set the animations
+                walking = true;
+                attacking = false;
+                agent.speed = initialSpeed;
+
+            }
+            else
+            {
+                walking = false;
+                attacking = true;
+                agent.speed = 0;
+                Debug.Log("Im supposed to be attacking");
+            }
+            zombieAnimator.SetBool("walking", walking);
+            zombieAnimator.SetBool("attacking", attacking);
 
             //Make the character rotate
-            var dirVector = playerTransform.position - transform.position;
-            transform.rotation = Quaternion.Slerp
-            (transform.rotation, Quaternion.LookRotation(dirVector), rotationSpeed * Time.deltaTime);
+            var dirVector = (playerTransform.position - transform.position).normalized;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dirVector), rotationSpeed * Time.deltaTime);
         }
         else
         {
+            //stop moving the character this is for test purposes
+            agent.isStopped = dead;
             walking = false;
-            attacking = true;
-            Debug.Log("Im supposed to be attacking");
+            attacking = false;
+            zombieAnimator.SetBool("walking", walking);
+            zombieAnimator.SetBool("attacking", attacking);
+            zombieAnimator.SetBool("dying", dead);
         }
-
-        basicZombieAnimator.SetBool("walking", walking);
-        basicZombieAnimator.SetBool("attacking", attacking);
 
     }
 
-    public bool IsMoving()
+    public bool IsWithinStoppingDistance()
     {
         return !(Vector3.Distance(transform.position, playerTransform.position) < agent.stoppingDistance);
     }
