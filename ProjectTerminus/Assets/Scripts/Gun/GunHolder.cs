@@ -11,6 +11,9 @@ public class GunHolder : MonoBehaviour
     [Tooltip("The gun container")]
     public Transform gunContainer;
 
+    [Tooltip("The gun animator")]
+    public Animator animator;
+
     [Header("Accuracy")]
     [Tooltip("How much the movement affects the accuracy")]
     public float movementAccuracy = 2;
@@ -52,6 +55,8 @@ public class GunHolder : MonoBehaviour
 
     public int secondaryAmmo;
 
+    public bool aiming;
+
     private void Start()
     {
         inputHandler = GetComponent<PlayerInputHandler>();
@@ -73,6 +78,38 @@ public class GunHolder : MonoBehaviour
     private void LateUpdate()
     {
         UpdateHud();
+    }
+
+    private void FixedUpdate()
+    {
+        HandleAiming();
+    }
+
+    private void HandleAiming()
+    {
+        bool aimInput = inputHandler.GetAimInput();
+
+        if(aiming != aimInput)
+        {
+            GunController currentHeldGun = CurrentHeldGun();
+
+            if(currentHeldGun != null)
+            {
+                aiming = aimInput;
+
+                float aimSpeed = 1 / currentHeldGun.aimSpeed;
+
+                animator.speed = aimInput ? aimSpeed : 1;
+
+                animator.SetBool("Scoped", aimInput);
+
+                if (aimInput)
+                {
+                    hudController.CrosshairTransition(CrosshairType.IRON_SIGHT, aimSpeed);
+                }
+
+            }
+        }
     }
 
     private void UpdateReloading()
@@ -100,8 +137,11 @@ public class GunHolder : MonoBehaviour
                 hudController.UpdateGunInfo(held.name, held.Clip, holdingPrimaryGun
                     ? primaryAmmo : secondaryAmmo);
 
-                hudController.UpdateCrosshair(
-                    held.spreadHip + held.recoil, MovementAccuracy(), CrosshairType.DEFAULT);
+                if (!aiming)
+                {
+                    hudController.UpdateCrosshair(
+                        held.spreadHip + held.recoil, MovementAccuracy(), CrosshairType.DEFAULT);
+                }
             }
 
         }
@@ -230,6 +270,28 @@ public class GunHolder : MonoBehaviour
     public float MovementAccuracy()
     {
         return playerController.velocity.magnitude / playerController.movementSpeed * movementAccuracy;
+    }
+
+    /// <summary>
+    /// Returns the movement of the gun holder
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 Movement()
+    {
+        Vector3 velocity = playerController.velocity;
+
+        if (playerController.IsGrounded) velocity.y = 0;
+
+        return velocity;
+    }
+
+    /// <summary>
+    /// Flags a hit and updates the hud controller accordingly
+    /// </summary>
+    /// <param name="kill">if the kill resulted in a kill</param>
+    public void LandedHit(bool kill)
+    {
+        hudController.Hitmarker(kill);
     }
 
 }

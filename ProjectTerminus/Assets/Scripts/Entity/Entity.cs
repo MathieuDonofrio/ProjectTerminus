@@ -56,7 +56,7 @@ public class Entity : MonoBehaviour
 
     /* Services */
 
-    public void Damage(float damage, GameObject damageSource, DamageType type)
+    public bool Damage(float damage, GameObject damageSource, DamageType type)
     {
         // Apply invincibility
         if (invincible) damage = 0.0f;
@@ -92,7 +92,14 @@ public class Entity : MonoBehaviour
         }
 
         // Kill
-        if (health <= 0) Kill();
+        if (health <= 0)
+        {
+            Kill();
+
+            return true;
+        }
+
+        return false;
     }
 
     public void Heal(float heal, HealType type)

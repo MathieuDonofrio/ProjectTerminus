@@ -59,6 +59,9 @@ public class GunController : MonoBehaviour
     [Tooltip("Recoil system used to apply recoil")]
     public RecoilSystem recoilSystem;
 
+    [Tooltip("Gun kick system used to apply gun kick")]
+    public GunKickSystem gunKickSystem;
+
     [Tooltip("Amount of angle of spread applied when hipfiring")]
     public float spreadHip = 20;
 
@@ -67,6 +70,9 @@ public class GunController : MonoBehaviour
 
     [Tooltip("Amount of recoil applied after each shot")]
     public float recoil = 1;
+
+    [Tooltip("Amount of gun kick applied after each shot")]
+    public float gunKick = 0.01f;
 
     [Tooltip("How fast the gun will apply its recoil in seconds")]
     public float kickSpeed = 0.05f;
@@ -90,6 +96,13 @@ public class GunController : MonoBehaviour
 
     [Tooltip("Movement speed is multiplied by this value when aiming down sight")]
     public float movementAimingModifier = 0.8f;
+
+    [Header("Aiming Settings")]
+    [Tooltip("How many seconds it takes for this gun to scope")]
+    public float aimSpeed = 0.1f;
+
+    [Tooltip("How much the field of view is decrease when scoped")]
+    public float fovDecrease = 10;
 
     [Header("Damage Settings")]
     [Tooltip("Base amount of damage to be applied when hit by projectile comming from this gun")]
@@ -251,21 +264,24 @@ public class GunController : MonoBehaviour
             // Calculate recoil kick
             Vector2 kick = sprayPattern.getRecoil(consecutiveShotCounter) * recoil;
 
-            // Apply kick
+            // Apply recoil kick
             recoilSystem.Kick(kick);
+
+            // Apply gun kick
+            gunKickSystem.Kick(-gunKick);
         }
 
         // Calculate ray start
         Vector3 rayStart = exitPoint.position - exitPoint.transform.forward * raycastOffset;
 
         // Calculate position
-        Vector3 position = exitPoint.position + exitPoint.transform.forward * exitOffset;
+        Vector3 position = exitPoint.position + exitPoint.transform.forward * exitOffset + gunHolder.Movement() * Time.deltaTime;
 
         // Calculate ranged direction
         Vector3 rangedDirection = transform.forward * range;
 
         // Calculate deviation amount
-        float deviationAmount = spreadHip + gunHolder.MovementAccuracy();
+        float deviationAmount = gunHolder.MovementAccuracy() + (gunHolder.aiming ? spreadAim : spreadHip);
 
         for (int i = 0; i < projectilesPerShot; i++)
         {
@@ -276,18 +292,47 @@ public class GunController : MonoBehaviour
             Quaternion rotation = Quaternion.LookRotation(rangedDirection + deviation);
 
             // Launch projectile
-            projectilePool.LaunchProjectile(
-                gunHolder.gameObject, rayStart, position, rotation, range, projectileSpeed);
+            projectilePool.LaunchProjectile(this, rayStart, position, rotation, range, projectileSpeed);
         }
 
         // Spawn muzzle flash
-        projectilePool.SpawnMuzzleFlash(position, transform.eulerAngles);
+        projectilePool.SpawnMuzzleFlash(position, transform.eulerAngles, gunHolder.Movement());
 
         // Increment consecutive shots
         consecutiveShotCounter++;
 
         // Record last shot
         lastShot = Time.time;
+    }
+
+    public bool CheckFiringConditions()
+    {
+        // Check holding fire
+        bool fire = inputHandler.GetFireInput();
+
+        // Get firing delay
+        float delay = firingType == FiringType.SEMI_AUTO
+            ? fireDelay * semiFireDelayModifier : fireDelay;
+
+        // Enable jitter clicking for semi auto and burst
+        if (firingType == FiringType.SEMI_AUTO || firingType == FiringType.BURST)
+        {
+            fire |= inputHandler.GetFireDownInput(delay * 0.8f);
+        }
+
+        // Check delay
+        fire &= Time.time - lastShot >= delay;
+
+        // Check if already firing
+        fire |= IsFiring;
+
+        // Check if reloading
+        fire &= !IsReloading;
+
+        // Check clip
+        fire &= Clip > 0;
+
+        return fire;
     }
 
     public void Fire()
@@ -358,36 +403,6 @@ public class GunController : MonoBehaviour
         Clip += reloadAmt;
 
         StopReloading();
-    }
-
-    public bool CheckFiringConditions()
-    {
-        // Check holding fire
-        bool fire = inputHandler.GetFireInput();
-
-        // Get firing delay
-        float delay = firingType == FiringType.SEMI_AUTO
-            ? fireDelay * semiFireDelayModifier : fireDelay;
-
-        // Enable jitter clicking for semi auto and burst
-        if (firingType == FiringType.SEMI_AUTO || firingType == FiringType.BURST)
-        {
-            fire |= inputHandler.GetFireDownInput(delay * 0.8f);
-        }
-
-        // Check delay
-        fire &= Time.time - lastShot >= delay;
-
-        // Check if already firing
-        fire |= IsFiring;
-
-        // Check if reloading
-        fire &= !IsReloading;
-
-        // Check clip
-        fire &= Clip > 0;
-
-        return fire;
     }
 
     public bool IsClipEmpty()

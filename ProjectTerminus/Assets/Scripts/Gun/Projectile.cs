@@ -15,11 +15,9 @@ public class Projectile : MonoBehaviour
 
     /* State */
 
-    private GameObject shooter;
+    private GunController shooter;
 
     private ProjectileHandler pool;
-
-    private LayerMask collisionLayer;
 
     private float range;
 
@@ -31,7 +29,6 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
-
         Vector3 movement = transform.forward * Time.deltaTime * speed;
 
         transform.position += movement;
@@ -54,11 +51,25 @@ public class Projectile : MonoBehaviour
 #endif
 
         if (Physics.Linecast(lastPosition, transform.position,
-            out RaycastHit hit, collisionLayer, QueryTriggerInteraction.Collide))
+            out RaycastHit hit, -1, QueryTriggerInteraction.Collide))
         {
-            // TODO damage entity
+            Entity entity = hit.collider.GetComponent<Entity>();
 
-            pool.SpawnBulletHole(hit.point, Quaternion.LookRotation(hit.normal));
+            if(entity != null)
+            {
+                float damage = shooter.damage + Random.value * shooter.randomDamage;
+
+                bool kill = entity.Damage(damage, shooter.gameObject, DamageType.PROJECTILE);
+
+                if(shooter.gunHolder != null)
+                {
+                    shooter.gunHolder.LandedHit(kill);
+                }
+            }
+            else
+            {
+                pool.SpawnBulletHole(hit.point, Quaternion.LookRotation(hit.normal));
+            }
 
             Kill();
         }
@@ -73,11 +84,10 @@ public class Projectile : MonoBehaviour
 
     /* Services */
 
-    public void StartLaunch(GameObject shooter, ProjectileHandler pool, Vector3 rayStart, LayerMask collisionLayer, float range, float speed)
+    public void StartLaunch(GunController shooter, ProjectileHandler pool, Vector3 rayStart, float range, float speed)
     {
         this.shooter = shooter;
         this.pool = pool;
-        this.collisionLayer = collisionLayer;
         this.range = range;
         this.speed = speed;
 

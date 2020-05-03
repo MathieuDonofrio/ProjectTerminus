@@ -134,10 +134,19 @@ public class PlayerInputHandler : MonoBehaviour
     /// <summary>
     /// Returns whether or not the fire input is being held down.
     /// </summary>
-    /// <returns>true if fire input is being held down, false otherwise</returns>
+    /// <returns>true if the fire input is being held down, false otherwise</returns>
     public bool GetFireInput()
     {
         return Input.GetButton(GameConstants.k_Fire);
+    }
+
+    /// <summary>
+    /// Returns whether or not the aim input is being held down.
+    /// </summary>
+    /// <returns>true if the aim input is being held down, false otherwise</returns>
+    public bool GetAimInput()
+    {
+        return Input.GetButton(GameConstants.k_Aim);
     }
 
     /// <summary>

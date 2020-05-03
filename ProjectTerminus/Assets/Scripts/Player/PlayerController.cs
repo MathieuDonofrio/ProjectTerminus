@@ -492,6 +492,10 @@ public class PlayerController : MonoBehaviour
         return transform.position + (Vector3.up * (height - controller.radius));
     }
 
+    public Vector3 GetMovement()
+    {
+        return controller.velocity;
+    }
 }
 
 /// <summary>

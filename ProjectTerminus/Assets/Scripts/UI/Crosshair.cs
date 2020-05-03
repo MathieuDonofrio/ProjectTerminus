@@ -12,6 +12,9 @@ public class Crosshair : MonoBehaviour
     [Tooltip("Determines how fast the crosshair expansion will interpolate between states")]
     public float sharpness = 2;
 
+    [Tooltip("The minimum size of the default crosshair")]
+    public float minSize = 6;
+
     [Header("Crosshairs")]
     [Tooltip("Default crosshair applied when not aiming")]
     public RectTransform crosshair;
@@ -30,6 +33,12 @@ public class Crosshair : MonoBehaviour
 
     private CrosshairType type;
 
+    private float transitionSpeed;
+
+    private CrosshairType transitionType;
+
+    private bool transition;
+
     private void Start()
     {
         type = CrosshairType.DEFAULT;
@@ -41,10 +50,27 @@ public class Crosshair : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(type == CrosshairType.DEFAULT && currentSize != targetSize)
+        if(type == CrosshairType.DEFAULT)
         {
-            currentSize = Mathf.Lerp(currentSize, targetSize, Time.deltaTime * sharpness);
+            if (transition)
+            {
+                currentSize = Mathf.Lerp(currentSize, 0, Time.deltaTime * transitionSpeed);
 
+                if(currentSize <= minSize)
+                {
+                    currentSize = 1;
+
+                    UpdateType(transitionType);
+
+                    transition = false;
+                }
+            }
+            else
+            {
+                currentSize = Mathf.Lerp(currentSize, targetSize, Time.deltaTime * sharpness);
+            }
+
+            
             Current().sizeDelta = new Vector2(currentSize, currentSize);
         }
     }
@@ -57,6 +83,14 @@ public class Crosshair : MonoBehaviour
     }
 
     /* Services */
+
+    public void Transition(CrosshairType transitionType, float t)
+    {
+        this.transitionType = transitionType;
+        transitionSpeed = t * 1.2f; // Make a bit faster for better sync
+
+        transition = true;
+    }
 
     public void UpdateType(CrosshairType type)
     {
@@ -73,6 +107,8 @@ public class Crosshair : MonoBehaviour
     public void UpdateSize(float size)
     {
         targetSize = expansionMultiplier * size;
+
+        transition = false;
     }
 
 }

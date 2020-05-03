@@ -56,7 +56,7 @@ public class ProjectileHandler : MonoBehaviour
 
     /* Services */
 
-    public void LaunchProjectile(GameObject shooter, Vector3 rayStart, Vector3 position, Quaternion rotation, float range, float speed)
+    public void LaunchProjectile(GunController shooter, Vector3 rayStart, Vector3 position, Quaternion rotation, float range, float speed)
     {
         if (projectilePrefab == null)
             return;
@@ -77,7 +77,7 @@ public class ProjectileHandler : MonoBehaviour
             projectile = Instantiate(projectilePrefab, position, rotation, transform);
         }
 
-        projectile.StartLaunch(shooter, this, rayStart, -1, range, speed);
+        projectile.StartLaunch(shooter, this, rayStart, range, speed);
     }
 
     public void SpawnBulletHole(Vector3 position, Quaternion rotation)
@@ -104,12 +104,16 @@ public class ProjectileHandler : MonoBehaviour
         bulletHole.Spawn(this);
     }
 
-    public void SpawnMuzzleFlash(Vector3 position, Vector3 rotation)
+    public void SpawnMuzzleFlash(Vector3 position, Vector3 rotation, Vector3 velocity)
     {
+        if (muzzleFlashParticleSystem == null)
+            return;
+
         var emitParams = new ParticleSystem.EmitParams();
 
         emitParams.position = position;
         emitParams.rotation3D = rotation + new Vector3(90, 0, 0);
+        emitParams.velocity = velocity;
 
         muzzleFlashParticleSystem.Emit(emitParams, 1);
     }
