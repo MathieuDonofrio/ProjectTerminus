@@ -17,7 +17,9 @@ public class ZombieController : MonoBehaviour
     public readonly float minTimeRange = 1;
     public readonly float maxTimeRange = 6;
     public Entity playerEntity;
-    private float attackSpeed = 1f;
+    public float attackSpeed = 5f;
+    public float stopTimeAfterAttack = 2f;
+    private bool hasAttackForTheFirtsTime = false;
     private float lastAttack;
 
 
@@ -36,7 +38,7 @@ public class ZombieController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            entity.Kill();
+          //  entity.Kill();
         }
 
         if (!entity.IsDead && canWalk)
@@ -44,6 +46,8 @@ public class ZombieController : MonoBehaviour
 
             // MOVE OUR AGENT
             agent.SetDestination(playerEntity.transform.position);
+
+            //make the player wait before applying damage for the first time
 
 
             //executing an action depending on if our player is moving
@@ -54,13 +58,14 @@ public class ZombieController : MonoBehaviour
                 attacking = true;
                 agent.speed = 0;
                 AttackPlayer();
+                //make the entity stop moving for a while after an attack
+                Invoke("ToggleSpeed", stopTimeAfterAttack);
             }
             else
             {
                 //Set the animations
                 walking = true;
                 attacking = false;
-                agent.speed = initialSpeed;
             }
 
             //Make the character rotate
@@ -72,17 +77,17 @@ public class ZombieController : MonoBehaviour
 
     }
 
-    public void ToggleCanWalk()
+    private void ToggleCanWalk()
     {
         canWalk = !canWalk;
     }
 
-    public bool IsWithinAttackRange()
+    private bool IsWithinAttackRange()
     {
         return Vector3.Distance(transform.position, playerEntity.transform.position) < agent.stoppingDistance;
     }
 
-    public void OnDeath()
+    private void OnDeath()
     {
        //stop moving the character this is for test purposes
        agent.isStopped = true;
@@ -94,9 +99,15 @@ public class ZombieController : MonoBehaviour
         Debug.Log("Im dead");
     }
 
-    public void AttackPlayer()
+    private void AttackPlayer()
     {
-        playerEntity.Damage(3f,gameObject,DamageType.PHYSICAL);
+        playerEntity.Damage(entity.damageMultiplier,gameObject,DamageType.PHYSICAL);
         lastAttack = Time.time;
+    }
+
+    private void ToggleSpeed()
+    {
+        agent.speed = initialSpeed;
+        hasAttackForTheFirtsTime = false;
     }
 }
