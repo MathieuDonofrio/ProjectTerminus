@@ -3,22 +3,32 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Entity))]
 public class ZombieController : MonoBehaviour
 {
     private NavMeshAgent agent;
+    private Entity entity;
     private int rotationSpeed = 10;
     private Animator zombieAnimator;
     private bool walking = false;
     private bool attacking = false;
-    public Transform playerTransform;
-    private bool dead = false;
     private float initialSpeed;
+    private bool canWalk = false;
+    public readonly float minTimeRange = 1;
+    public readonly float maxTimeRange = 6;
+    public Entity playerEntity;
+    private float attackSpeed = 1f;
+    private float lastAttack;
+
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         zombieAnimator = GetComponent<Animator>();
+        entity = GetComponent<Entity>();
         initialSpeed = agent.speed;
+        entity.onDeath += OnDeath;
+        Invoke("ToggleCanWalk", Random.Range(minTimeRange, maxTimeRange));
     }
 
     // Update is called once per frame
@@ -26,56 +36,67 @@ public class ZombieController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            dead = !dead;
+            entity.Kill();
         }
 
-        if (!dead)
+        if (!entity.IsDead && canWalk)
         {
 
             // MOVE OUR AGENT
-            agent.isStopped = false;
-
-            agent.SetDestination(playerTransform.position);
+            agent.SetDestination(playerEntity.transform.position);
 
 
             //executing an action depending on if our player is moving
-            if (IsWithinStoppingDistance())
+            if (IsWithinAttackRange() && Time.time - lastAttack >= attackSpeed)
+            {
+                //Set the animations
+                walking = false;
+                attacking = true;
+                agent.speed = 0;
+                AttackPlayer();
+            }
+            else
             {
                 //Set the animations
                 walking = true;
                 attacking = false;
                 agent.speed = initialSpeed;
-
             }
-            else
-            {
-                walking = false;
-                attacking = true;
-                agent.speed = 0;
-                Debug.Log("Im supposed to be attacking");
-            }
-            zombieAnimator.SetBool("walking", walking);
-            zombieAnimator.SetBool("attacking", attacking);
 
             //Make the character rotate
-            var dirVector = (playerTransform.position - transform.position).normalized;
+            var dirVector = (playerEntity.transform.position - transform.position).normalized;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dirVector), rotationSpeed * Time.deltaTime);
-        }
-        else
-        {
-            //stop moving the character this is for test purposes
-            agent.isStopped = dead;
-            walking = false;
-            attacking = false;
             zombieAnimator.SetBool("walking", walking);
             zombieAnimator.SetBool("attacking", attacking);
-            zombieAnimator.SetBool("dying", dead);
         }
 
     }
 
-    public bool IsWithinStoppingDistance()
+    public void ToggleCanWalk()
     {
-        return !(Vector3.Distance(transform.position, playerTransform.position) < agent.stoppingDistance);
+        canWalk = !canWalk;
+    }
+
+    public bool IsWithinAttackRange()
+    {
+        return Vector3.Distance(transform.position, playerEntity.transform.position) < agent.stoppingDistance;
+    }
+
+    public void OnDeath()
+    {
+       //stop moving the character this is for test purposes
+       agent.isStopped = true;
+       walking = false;
+       attacking = false;
+       zombieAnimator.SetBool("walking", walking);
+       zombieAnimator.SetBool("attacking", attacking);
+       //zombieAnimator.SetBool("dying", true);
+        Debug.Log("Im dead");
+    }
+
+    public void AttackPlayer()
+    {
+        playerEntity.Damage(3f,gameObject,DamageType.PHYSICAL);
+        lastAttack = Time.time;
     }
 }
