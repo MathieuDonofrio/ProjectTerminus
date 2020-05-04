@@ -6,7 +6,22 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Entity))]
 public class ZombieController : MonoBehaviour
 {
+    /* Configuration */
+
+    [Header("Movement Settings")]
+    [Tooltip("Base movement speed")]
+    public float movementSpeed = 0.4f;
+
+    [Tooltip("Speed multiplier for movement and animations")]
+    public float rage = 1.0f;
+
     [Header("Target Settings")]
+    [Tooltip("The maximum range the zombie can attack from")]
+    public float attackRange = 2.0f;
+
+    [Tooltip("The attack range the zombie will start attacking from")]
+    public float startAttackRange = 1.0f;
+
     [Tooltip("Amount of seconds for head rotation to look at a position")]
     public float lookSpeed = 0.2f;
 
@@ -17,7 +32,10 @@ public class ZombieController : MonoBehaviour
     [Tooltip("Amount of seconds the attack lasts")]
     public float attackDuration = 2.0f;
 
-    [Tooltip("Amount of base damage per attacl")]
+    [Tooltip("When the attack hit will ")]
+    public float attackHitDelay = 1.0f;
+
+    [Tooltip("Amount of base damage per attack")]
     public float attackDamage = 2.0f;
 
     [Tooltip("Amount of random damage added to base damage per attack")]
@@ -29,7 +47,7 @@ public class ZombieController : MonoBehaviour
 
     private Entity entity;
 
-    private Animator zombieAnimator;
+    private Animator animator;
 
     /* State */
 
@@ -43,17 +61,21 @@ public class ZombieController : MonoBehaviour
 
     private float lastAttackTime = Mathf.NegativeInfinity;
 
+    /* Other */
+
+    private bool attackSuccessfull;
+
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        zombieAnimator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         entity = GetComponent<Entity>();
 
         entity.onDeath += OnDeath;
 
         SetTargetNearestPlayer();
 
-        zombieAnimator.SetBool("walking", true);
+        animator.SetBool("walking", true);
     }
 
     private void FixedUpdate()
@@ -64,20 +86,30 @@ public class ZombieController : MonoBehaviour
         if (!entity.IsDead && TargetEntity != null)
         {
 
+            UpdateSpeed();
+
             if(!IsAttacking && agent.destination != TargetEntity.transform.position)
             {
                 agent.SetDestination(TargetEntity.transform.position);
             }
 
-            if (IsWithinAttackRange() && Time.time - lastAttackTime >= attackDelay)
+            if (IsAttacking)
             {
-                Attack(TargetEntity);
+                if(!IsWithinAttackRange(attackRange) || Time.time - lastAttackTime >= attackDuration / rage)
+                {
+                    FinishAttack();
+                }
+                else if (!attackSuccessfull && Time.time - lastAttackTime >= attackHitDelay / rage)
+                {
+                    Attack();
+                }
+
+            }
+            else if(Time.time - lastAttackTime >= attackDelay / rage && IsWithinAttackRange(startAttackRange))
+            {
+                StartAttack();
             }
 
-            if(IsAttacking && Time.time - lastAttackTime >= attackDuration)
-            {
-                FinishAttack();
-            }
 
             Vector3 targetDirection = TargetEntity.transform.position - transform.position;
 
@@ -96,19 +128,58 @@ public class ZombieController : MonoBehaviour
         IsAttacking = false;
 
         // Stop animations
-        zombieAnimator.SetBool("walking", false);
-        zombieAnimator.SetBool("attacking", false);
+        animator.SetBool("walking", false);
+        animator.SetBool("attacking", false);
 
         // Start death animation
         //zombieAnimator.SetBool("dying", true);
+    }
+
+    private void StartAttack()
+    {
+        // Stop agent
+        agent.SetDestination(transform.position);
+
+        // Update state
+        IsAttacking = true;
+
+        // Toggle walking animation
+        animator.SetBool("attacking", true);
+        animator.SetBool("walking", false);
+
+        // Reset attack success flag
+        attackSuccessfull = false;
+
+        // Record last attack
+        lastAttackTime = Time.time;
+    }
+
+    private void Attack()
+    {
+        // Calculate damage
+        float damage = attackDamage + Random.value * randomAttackDamage;
+
+        // Damage entity
+        TargetEntity.Damage(damage, gameObject, DamageType.PHYSICAL);
+
+        // Flag attack success
+        attackSuccessfull = true;
     }
 
     private void FinishAttack()
     {
         IsAttacking = false;
 
-        zombieAnimator.SetBool("attacking", false);
-        zombieAnimator.SetBool("walking", true);
+        animator.SetBool("attacking", false);
+        animator.SetBool("walking", true);
+    }
+
+    private void UpdateSpeed()
+    {
+        float speed = movementSpeed * rage;
+
+        if (agent.speed != speed) agent.speed = speed;
+        if (animator.speed != rage) animator.speed = rage;
     }
 
     /* Services */
@@ -138,7 +209,7 @@ public class ZombieController : MonoBehaviour
         TargetEntity = entity;
     }
 
-    private bool IsWithinAttackRange()
+    private bool IsWithinAttackRange(float attackRange)
     {
         if (TargetEntity == null)
             return false;
@@ -146,29 +217,7 @@ public class ZombieController : MonoBehaviour
         // Calculate square distance
         float sqrDistance = (TargetEntity.transform.position - transform.position).sqrMagnitude;
 
-        return sqrDistance < agent.stoppingDistance * agent.stoppingDistance;
-    }
-
-    public void Attack(Entity entity)
-    {
-        // Calculate damage
-        float damage = attackDamage + Random.value * randomAttackDamage;
-
-        // Damage entity
-        entity.Damage(damage, gameObject, DamageType.PHYSICAL);
-
-        // Stop agent
-        agent.SetDestination(transform.position);
-
-        // Update state
-        IsAttacking = true;
-
-        // Toggle walking animation
-        zombieAnimator.SetBool("attacking", true);
-        zombieAnimator.SetBool("walking", false);
-
-        // Record last attack
-        lastAttackTime = Time.time;
+        return sqrDistance < attackRange * attackRange;
     }
 
 }
