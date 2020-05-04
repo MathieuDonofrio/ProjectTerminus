@@ -31,7 +31,14 @@ public class BloodOverlay : MonoBehaviour
     {
         if(currentFill != targetFill)
         {
-            currentFill = Mathf.Lerp(currentFill, targetFill, Time.deltaTime * sharpness);
+            if (Mathf.Abs(currentFill - targetFill) < 0.01)
+            {
+                currentFill = targetFill;
+            }
+            else
+            {
+                currentFill = Mathf.Lerp(currentFill, targetFill, Time.deltaTime * sharpness);
+            }
 
             blood.color = new Color(1, 1, 1, currentFill);
         }

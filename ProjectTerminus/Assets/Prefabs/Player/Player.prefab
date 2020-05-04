@@ -1229,7 +1229,7 @@ MonoBehaviour:
   landSFX: {fileID: 8300000, guid: 64727cf301351c84e88366f82bd4a2e8, type: 3}
   breathSFX: {fileID: 0}
   heartbeatSFX: {fileID: 8300000, guid: 6499fa264478a93488a1b015150f42bf, type: 3}
-  gunHolder: {fileID: 0}
+  gunHolder: {fileID: 8174279990769940643}
   hudController: {fileID: 8174279991689234995}
 --- !u!114 &8174279990769940653
 MonoBehaviour:
@@ -1295,7 +1295,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.35
+  m_StepOffset: 0.4
   m_SkinWidth: 0.04
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
@@ -1845,10 +1845,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gunHolder: {fileID: 8174279990769940643}
-  sum: {x: 0, y: 0, z: 0}
-  add: {x: 0, y: 0, z: 0}
-  lastKickSpeed: 0
-  lastCenterSpeed: 0
+  maxOffset: 0.1
+  sum: 0
+  add: 0
   centering: 0
 --- !u!1 &8174279990992905960
 GameObject:

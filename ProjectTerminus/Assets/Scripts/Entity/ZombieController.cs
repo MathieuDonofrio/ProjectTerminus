@@ -6,108 +6,169 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Entity))]
 public class ZombieController : MonoBehaviour
 {
-    private NavMeshAgent agent;
-    private Entity entity;
-    private int rotationSpeed = 10;
-    private Animator zombieAnimator;
-    private bool walking = false;
-    private bool attacking = false;
-    private float initialSpeed;
-    private bool canWalk = false;
-    public readonly float minTimeRange = 1;
-    public readonly float maxTimeRange = 6;
-    public Entity playerEntity;
-    public float attackSpeed = 5f;
-    public float stopTimeAfterAttack = 2f;
-    private bool hasAttackForTheFirtsTime = false;
-    private float lastAttack;
+    [Header("Target Settings")]
+    [Tooltip("Amount of seconds for head rotation to look at a position")]
+    public float lookSpeed = 0.2f;
 
+    [Header("Attack Settings")]
+    [Tooltip("Minimum amount of seconds between each attack")]
+    public float attackDelay= 3f;
+
+    [Tooltip("Amount of seconds the attack lasts")]
+    public float attackDuration = 2.0f;
+
+    [Tooltip("Amount of base damage per attacl")]
+    public float attackDamage = 2.0f;
+
+    [Tooltip("Amount of random damage added to base damage per attack")]
+    public float randomAttackDamage = 1.0f;
+
+    /* Required Components */
+
+    private NavMeshAgent agent;
+
+    private Entity entity;
+
+    private Animator zombieAnimator;
+
+    /* State */
+
+    public Entity TargetEntity { get; private set; }
+
+    public bool IsAttacking { get; private set; }
+
+    public bool Enabled { get; set; }
+
+    /* Timestamps */
+
+    private float lastAttackTime = Mathf.NegativeInfinity;
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         zombieAnimator = GetComponent<Animator>();
         entity = GetComponent<Entity>();
-        initialSpeed = agent.speed;
+
         entity.onDeath += OnDeath;
-        Invoke("ToggleCanWalk", Random.Range(minTimeRange, maxTimeRange));
+
+        SetTargetNearestPlayer();
+
+        zombieAnimator.SetBool("walking", true);
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-          //  entity.Kill();
-        }
+        if (!enabled)
+            return;
 
-        if (!entity.IsDead && canWalk)
+        if (!entity.IsDead && TargetEntity != null)
         {
 
-            // MOVE OUR AGENT
-            agent.SetDestination(playerEntity.transform.position);
-
-            //make the player wait before applying damage for the first time
-
-
-            //executing an action depending on if our player is moving
-            if (IsWithinAttackRange() && Time.time - lastAttack >= attackSpeed)
+            if(!IsAttacking && agent.destination != TargetEntity.transform.position)
             {
-                //Set the animations
-                walking = false;
-                attacking = true;
-                agent.speed = 0;
-                AttackPlayer();
-                //make the entity stop moving for a while after an attack
-                Invoke("ToggleSpeed", stopTimeAfterAttack);
-            }
-            else
-            {
-                //Set the animations
-                walking = true;
-                attacking = false;
+                agent.SetDestination(TargetEntity.transform.position);
             }
 
-            //Make the character rotate
-            var dirVector = (playerEntity.transform.position - transform.position).normalized;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dirVector), rotationSpeed * Time.deltaTime);
-            zombieAnimator.SetBool("walking", walking);
-            zombieAnimator.SetBool("attacking", attacking);
+            if (IsWithinAttackRange() && Time.time - lastAttackTime >= attackDelay)
+            {
+                Attack(TargetEntity);
+            }
+
+            if(IsAttacking && Time.time - lastAttackTime >= attackDuration)
+            {
+                FinishAttack();
+            }
+
+            Vector3 targetDirection = TargetEntity.transform.position - transform.position;
+
+            transform.rotation = Quaternion.Slerp(transform.rotation, 
+                Quaternion.LookRotation(targetDirection), Time.fixedDeltaTime / lookSpeed);
         }
 
-    }
-
-    private void ToggleCanWalk()
-    {
-        canWalk = !canWalk;
-    }
-
-    private bool IsWithinAttackRange()
-    {
-        return Vector3.Distance(transform.position, playerEntity.transform.position) < agent.stoppingDistance;
     }
 
     private void OnDeath()
     {
-       //stop moving the character this is for test purposes
-       agent.isStopped = true;
-       walking = false;
-       attacking = false;
-       zombieAnimator.SetBool("walking", walking);
-       zombieAnimator.SetBool("attacking", attacking);
-       //zombieAnimator.SetBool("dying", true);
-        Debug.Log("Im dead");
+        // Stop agent
+        agent.isStopped = true;
+
+        // Update state
+        IsAttacking = false;
+
+        // Stop animations
+        zombieAnimator.SetBool("walking", false);
+        zombieAnimator.SetBool("attacking", false);
+
+        // Start death animation
+        //zombieAnimator.SetBool("dying", true);
     }
 
-    private void AttackPlayer()
+    private void FinishAttack()
     {
-        playerEntity.Damage(entity.damageMultiplier,gameObject,DamageType.PHYSICAL);
-        lastAttack = Time.time;
+        IsAttacking = false;
+
+        zombieAnimator.SetBool("attacking", false);
+        zombieAnimator.SetBool("walking", true);
     }
 
-    private void ToggleSpeed()
+    /* Services */
+
+    public void SetTargetNearestPlayer()
     {
-        agent.speed = initialSpeed;
-        hasAttackForTheFirtsTime = false;
+        // Find player
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        GameObject closest = SearchUtil.FindClosest(players, transform.position);
+
+        if (closest != null)
+        {
+            Entity entityPlayer = closest.GetComponent<Entity>();
+
+            if (entityPlayer != null)
+            {
+                SetTarget(entityPlayer);
+            }
+        }
+
     }
+
+    public void SetTarget(Entity entity)
+    {
+        // Set target entity
+        TargetEntity = entity;
+    }
+
+    private bool IsWithinAttackRange()
+    {
+        if (TargetEntity == null)
+            return false;
+
+        // Calculate square distance
+        float sqrDistance = (TargetEntity.transform.position - transform.position).sqrMagnitude;
+
+        return sqrDistance < agent.stoppingDistance * agent.stoppingDistance;
+    }
+
+    public void Attack(Entity entity)
+    {
+        // Calculate damage
+        float damage = attackDamage + Random.value * randomAttackDamage;
+
+        // Damage entity
+        entity.Damage(damage, gameObject, DamageType.PHYSICAL);
+
+        // Stop agent
+        agent.SetDestination(transform.position);
+
+        // Update state
+        IsAttacking = true;
+
+        // Toggle walking animation
+        zombieAnimator.SetBool("attacking", true);
+        zombieAnimator.SetBool("walking", false);
+
+        // Record last attack
+        lastAttackTime = Time.time;
+    }
+
 }

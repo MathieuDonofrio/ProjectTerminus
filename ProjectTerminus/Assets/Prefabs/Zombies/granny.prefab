@@ -760,7 +760,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 1
 --- !u!114 &8135987117402686916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -793,9 +793,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0357f6d36ddb064290f9f1bfa7df895, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerEntity: {fileID: 0}
-  attackSpeed: 5
-  stopTimeAfterAttack: 2
+  lookSpeed: 0.2
+  attackDelay: 5
+  attackDuration: 2
+  attackDamage: 2
+  randomAttackDamage: 1
 --- !u!1 &4909415651987537883
 GameObject:
   m_ObjectHideFlags: 0

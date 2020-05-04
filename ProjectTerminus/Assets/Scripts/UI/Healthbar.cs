@@ -41,9 +41,16 @@ public class Healthbar : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (currentFill < targetFill)
+        if (currentFill != targetFill)
         {
-            currentFill = Mathf.Lerp(currentFill, targetFill, Time.deltaTime * sharpness);
+            if(Mathf.Abs(currentFill - targetFill) < 0.01)
+            {
+                currentFill = targetFill;
+            }
+            else
+            {
+                currentFill = Mathf.Lerp(currentFill, targetFill, Time.deltaTime * sharpness);
+            }
 
             healthBarMat.SetFloat("_Health", currentFill);
 
