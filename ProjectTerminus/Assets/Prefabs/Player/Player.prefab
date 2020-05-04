@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7508f57c23a1394d84104bc51553b78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  duration: 0.5
+  duration: 0.04
   hit: {fileID: 8174279990430078062}
   kill: {fileID: 8174279992060336019}
 --- !u!1 &8174279990186706680
@@ -760,6 +760,7 @@ MonoBehaviour:
   raycastOffset: 0.2
   range: 100
   projectileSpeed: 80
+  impactStrength: 0.5
   firingType: 0
   projectilesPerShot: 1
   roundsPerBurst: 1
@@ -784,6 +785,7 @@ MonoBehaviour:
   damage: 2
   randomDamage: 1
   headshotModifier: 1.5
+  shot: {fileID: 8300000, guid: 731f3230a4efcfb44afdff6ba4ce3590, type: 3}
   Clip: 0
   reloadAmt: 0
   IsReloading: 0
@@ -1178,6 +1180,7 @@ MonoBehaviour:
   unlimitedAmmo: 1
   amountOfClipsPerRefill: 6
   hudController: {fileID: 8174279991689234995}
+  hitmarker: {fileID: 8300000, guid: 0ebd766b0165bac4ba0483cf00a63e65, type: 3}
   holdingPrimaryGun: 0
   primaryAmmo: 0
   secondaryAmmo: 0
@@ -1311,7 +1314,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0

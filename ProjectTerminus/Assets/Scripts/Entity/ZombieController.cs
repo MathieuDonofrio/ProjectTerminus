@@ -4,6 +4,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Entity))]
+[RequireComponent(typeof(AudioSource))]
 public class ZombieController : MonoBehaviour
 {
     /* Configuration */
@@ -14,6 +15,9 @@ public class ZombieController : MonoBehaviour
 
     [Tooltip("Speed multiplier for movement and animations")]
     public float rage = 1.0f;
+
+    [Tooltip("The amount of time the zombie will be stunned after being shot")]
+    public float shotStunDuration = 0.2f;
 
     [Header("Target Settings")]
     [Tooltip("The maximum range the zombie can attack from")]
@@ -41,6 +45,10 @@ public class ZombieController : MonoBehaviour
     [Tooltip("Amount of random damage added to base damage per attack")]
     public float randomAttackDamage = 1.0f;
 
+    [Header("Audio Clips")]
+    [Tooltip("Sound played when zombie gets hurt")]
+    public AudioClip hurt;
+
     /* Required Components */
 
     private NavMeshAgent agent;
@@ -48,6 +56,8 @@ public class ZombieController : MonoBehaviour
     private Entity entity;
 
     private Animator animator;
+
+    private AudioSource audioSouce;
 
     /* State */
 
@@ -61,6 +71,8 @@ public class ZombieController : MonoBehaviour
 
     private float lastAttackTime = Mathf.NegativeInfinity;
 
+    private float lastShotTime = Mathf.NegativeInfinity;
+
     /* Other */
 
     private bool attackSuccessfull;
@@ -70,8 +82,10 @@ public class ZombieController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         entity = GetComponent<Entity>();
+        audioSouce = GetComponent<AudioSource>();
 
         entity.onDeath += OnDeath;
+        entity.onDamaged += OnDamage;
 
         SetTargetNearestPlayer();
 
@@ -88,7 +102,7 @@ public class ZombieController : MonoBehaviour
 
             UpdateSpeed();
 
-            if(!IsAttacking && agent.destination != TargetEntity.transform.position)
+            if(!IsAttacking && !agent.isStopped && agent.destination != TargetEntity.transform.position)
             {
                 agent.SetDestination(TargetEntity.transform.position);
             }
@@ -110,6 +124,10 @@ public class ZombieController : MonoBehaviour
                 StartAttack();
             }
 
+            if(agent.isStopped && Time.time - lastShotTime >= shotStunDuration)
+            {
+                agent.isStopped = false;
+            }
 
             Vector3 targetDirection = TargetEntity.transform.position - transform.position;
 
@@ -132,7 +150,21 @@ public class ZombieController : MonoBehaviour
         animator.SetBool("attacking", false);
 
         // Start death animation
-        //zombieAnimator.SetBool("dying", true);
+        //animator.SetBool("dying", true);
+
+        Destroy(gameObject); // TODO temporary
+    }
+
+    private void OnDamage(float damage, GameObject shooter, DamageType type)
+    {
+        if(type == DamageType.PROJECTILE)
+        {
+            agent.isStopped = true;
+
+            audioSouce.PlayOneShot(hurt);
+
+            lastAttackTime = Time.time;
+        }
     }
 
     private void StartAttack()

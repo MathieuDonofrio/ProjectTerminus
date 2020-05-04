@@ -6,7 +6,7 @@ using UnityEngine;
 public class Hitmarker : MonoBehaviour
 {
     [Tooltip("Amount of time the hitmarket will last")]
-    public float duration = 0.5f;
+    public float duration = 0.02f;
 
     [Header("Hitmarkers")]
     [Tooltip("Hitmarket displayed when shot has landed a hit but did not kill")]
