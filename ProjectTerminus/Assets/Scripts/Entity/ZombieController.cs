@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Profiling.Memory.Experimental;
+using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -49,6 +50,8 @@ public class ZombieController : MonoBehaviour
 
     private Animator animator;
 
+    private RagDollController ragDollController;
+
     /* State */
 
     public Entity TargetEntity { get; private set; }
@@ -70,12 +73,21 @@ public class ZombieController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         entity = GetComponent<Entity>();
+        ragDollController = GetComponent<RagDollController>();
 
         entity.onDeath += OnDeath;
 
         SetTargetNearestPlayer();
 
         animator.SetBool("walking", true);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            entity.Kill();
+        }
     }
 
     private void FixedUpdate()
@@ -123,6 +135,7 @@ public class ZombieController : MonoBehaviour
     {
         // Stop agent
         agent.isStopped = true;
+        agent.enabled = false;
 
         // Update state
         IsAttacking = false;
@@ -130,6 +143,8 @@ public class ZombieController : MonoBehaviour
         // Stop animations
         animator.SetBool("walking", false);
         animator.SetBool("attacking", false);
+        animator.enabled = false;
+        //ragDollController.ActivateRagdoll(true);
 
         // Start death animation
         //zombieAnimator.SetBool("dying", true);
