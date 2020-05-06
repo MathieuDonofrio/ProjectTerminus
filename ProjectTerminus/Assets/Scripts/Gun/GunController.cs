@@ -5,6 +5,7 @@ using UnityEngine.Profiling;
 
 [RequireComponent(typeof(PlayerInputHandler))]
 [RequireComponent(typeof(SprayPattern))]
+[RequireComponent(typeof(AudioSource))]
 public class GunController : MonoBehaviour
 {
 
@@ -35,6 +36,9 @@ public class GunController : MonoBehaviour
 
     [Tooltip("The speed of the projectile comming out of the gun")]
     public float projectileSpeed = 100;
+
+    [Tooltip("The amount of knockback the projectile will do when it hits")]
+    public float impactStrength = 0.5f;
 
     [Header("Shoot Settings")]
     [Tooltip("The firing mechanism type of the gun")]
@@ -114,11 +118,17 @@ public class GunController : MonoBehaviour
     [Tooltip("Damage is multiplied by this value if the entity what shot in the head")]
     public float headshotModifier = 1.5f;
 
+    [Header("Audio Clips")]
+    [Tooltip("Sound played when gun shoots")]
+    public AudioClip shot;
+
     /* Required Components */
 
     private PlayerInputHandler inputHandler;
 
     private SprayPattern sprayPattern;
+
+    private AudioSource audioSouce;
 
     /* State */
 
@@ -154,6 +164,7 @@ public class GunController : MonoBehaviour
     {
         inputHandler = GetComponent<PlayerInputHandler>();
         sprayPattern = GetComponent<SprayPattern>();
+        audioSouce = GetComponent<AudioSource>();
     }
 
     private void LateUpdate()
@@ -297,6 +308,9 @@ public class GunController : MonoBehaviour
 
         // Spawn muzzle flash
         projectilePool.SpawnMuzzleFlash(position, transform.eulerAngles, gunHolder.Movement());
+
+        // Play shot sound
+        audioSouce.PlayOneShot(shot);
 
         // Increment consecutive shots
         consecutiveShotCounter++;

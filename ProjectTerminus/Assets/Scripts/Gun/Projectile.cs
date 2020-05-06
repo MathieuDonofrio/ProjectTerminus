@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
+using UnityEngine.AI;
 
 public class Projectile : MonoBehaviour
 {
@@ -53,25 +54,39 @@ public class Projectile : MonoBehaviour
         if (Physics.Linecast(lastPosition, transform.position,
             out RaycastHit hit, -1, QueryTriggerInteraction.Collide))
         {
+            bool landedHit = false;
+
             Entity entity = hit.collider.GetComponent<Entity>();
 
             if(entity != null)
             {
-                float damage = shooter.damage + Random.value * shooter.randomDamage;
-
-                bool kill = entity.Damage(damage, shooter.gameObject, DamageType.PROJECTILE);
-
-                if(shooter.gunHolder != null)
+                if (!entity.IsDead)
                 {
-                    shooter.gunHolder.LandedHit(kill);
+                    float damage = shooter.damage + Random.value * shooter.randomDamage;
+
+                    bool kill = entity.Damage(damage, shooter.gameObject, DamageType.PROJECTILE);
+
+                    if (shooter.gunHolder != null)
+                    {
+                        shooter.gunHolder.LandedHit(kill);
+                    }
+
+                    DoImpact(entity);
+
+                    landedHit = true;
                 }
             }
             else
             {
                 pool.SpawnBulletHole(hit.point, Quaternion.LookRotation(hit.normal));
+
+                landedHit = true;
             }
 
-            Kill();
+            if (landedHit)
+            {
+                Kill();
+            }
         }
 
         lastPosition = transform.position;
@@ -80,6 +95,16 @@ public class Projectile : MonoBehaviour
         Profiler.EndSample();
 #endif
 
+    }
+
+    private void DoImpact(Entity entity)
+    {
+        NavMeshAgent agent = entity.GetComponent<NavMeshAgent>();
+
+        if(agent != null)
+        {            
+            agent.velocity = transform.forward * shooter.impactStrength;
+        }
     }
 
     /* Services */

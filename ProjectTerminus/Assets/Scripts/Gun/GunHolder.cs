@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputHandler))]
 [RequireComponent(typeof(PlayerController))]
+[RequireComponent(typeof(AudioSource))]
 public class GunHolder : MonoBehaviour
 {
     /* Configuration */
@@ -39,11 +40,17 @@ public class GunHolder : MonoBehaviour
     [Tooltip("The HUD controller")]
     public HUDController hudController;
 
+    [Header("Audio Clips")]
+    [Tooltip("Sound played when landed a hit")]
+    public AudioClip hitmarker;
+
     /* Required Components */
 
     private PlayerInputHandler inputHandler;
 
     private PlayerController playerController;
+
+    private AudioSource audioSource;
 
     /* State */
 
@@ -61,6 +68,7 @@ public class GunHolder : MonoBehaviour
     {
         inputHandler = GetComponent<PlayerInputHandler>();
         playerController = GetComponent<PlayerController>();
+        audioSource = GetComponent<AudioSource>();
 
         SetGun(false);
     }
@@ -110,6 +118,7 @@ public class GunHolder : MonoBehaviour
 
             }
         }
+
     }
 
     private void UpdateReloading()
@@ -292,6 +301,8 @@ public class GunHolder : MonoBehaviour
     public void LandedHit(bool kill)
     {
         hudController.Hitmarker(kill);
+
+        audioSource.PlayOneShot(hitmarker);
     }
 
 }
