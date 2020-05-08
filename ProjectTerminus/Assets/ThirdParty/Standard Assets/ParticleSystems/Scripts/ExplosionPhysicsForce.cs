@@ -10,7 +10,7 @@ namespace UnityStandardAssets.Effects
         public float explosionForce = 4;
 
 
-        private IEnumerator Start()
+        public IEnumerator Start()
         {
             // wait one frame because some explosions instantiate debris which should then
             // be pushed by physics force

@@ -1,24 +1,42 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class RagDollController : MonoBehaviour
 {
-
-    public Collider[] AllColliders;
+    private Collider mainCollider;
+    private Collider[] allColliders;
 
     private void Awake()
     {
-        AllColliders = GetComponentsInChildren<Collider>(true);
-        ActivateRagdoll(false);
+        mainCollider = GetComponent<Collider>();
+        allColliders = GetComponentsInChildren<Collider>();
+    }
+
+    public void ExplosionOnDeath(float force, float radius)
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        Rigidbody[] rbs = GetComponentsInChildren<Rigidbody>();
+
+        rb.isKinematic = false;
+
+      //  rb.AddExplosionForce(force, transform.position, radius);
+        foreach (Rigidbody rigidbody in rbs)
+        {
+            rigidbody.AddExplosionForce(force, transform.position, radius);
+        }
+
     }
 
     public void ActivateRagdoll(bool active)
     {
-        foreach (var col in AllColliders)
+        foreach (var col in allColliders)
             col.enabled = active;
 
-        GetComponent<Rigidbody>().useGravity = !active;
+        mainCollider.enabled = !active;
+
+        GetComponent<NavMeshAgent>().enabled = false;
         GetComponent<Animator>().enabled = !active;
     }
     

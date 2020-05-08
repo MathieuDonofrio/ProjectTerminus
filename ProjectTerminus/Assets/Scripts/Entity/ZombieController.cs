@@ -5,6 +5,8 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Entity))]
+[RequireComponent(typeof(RagDollController))]
+[RequireComponent(typeof(Collider))]
 public class ZombieController : MonoBehaviour
 {
     /* Configuration */
@@ -80,14 +82,7 @@ public class ZombieController : MonoBehaviour
         SetTargetNearestPlayer();
 
         animator.SetBool("walking", true);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            entity.Kill();
-        }
+        Invoke("PlayIdleSound",Random.Range(0f,2f));
     }
 
     private void FixedUpdate()
@@ -133,21 +128,19 @@ public class ZombieController : MonoBehaviour
 
     private void OnDeath()
     {
-        // Stop agent
-        agent.isStopped = true;
+       
         agent.enabled = false;
+        entity.Kill();
+        ragDollController.ActivateRagdoll(true);
+        //GetComponentInChildren<AudioManager>().Stop("walkingSound");
+    }
 
-        // Update state
-        IsAttacking = false;
+    public void ExplosionOnDeath(float force,float radius)
+    {
+        OnDeath();
 
-        // Stop animations
-        animator.SetBool("walking", false);
-        animator.SetBool("attacking", false);
-        animator.enabled = false;
-        //ragDollController.ActivateRagdoll(true);
+        ragDollController.ExplosionOnDeath(force,radius);
 
-        // Start death animation
-        //zombieAnimator.SetBool("dying", true);
     }
 
     private void StartAttack()
@@ -187,6 +180,11 @@ public class ZombieController : MonoBehaviour
 
         animator.SetBool("attacking", false);
         animator.SetBool("walking", true);
+    }
+
+    private void PlayIdleSound()
+    {
+       // GetComponentInChildren<AudioManager>().Play("walkingSound");
     }
 
     private void UpdateSpeed()
