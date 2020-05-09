@@ -824,7 +824,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.16703291
-  m_Height: 0.66813165
+  m_Height: 0.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.33406582, z: 0}
 --- !u!144 &2152209408042021084
@@ -933,7 +933,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.101569556
-  m_Height: 0.40627822
+  m_Height: 0.3
   m_Direction: 1
   m_Center: {x: 0, y: 0.20313911, z: 0}
 --- !u!144 &2152209407661721193
@@ -1336,7 +1336,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.13563275
-  m_Height: 0.67816377
+  m_Height: 0.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.33908188, z: 0}
 --- !u!144 &2152209408596105144
@@ -1445,7 +1445,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.10155805
-  m_Height: 0.4062322
+  m_Height: 0.3
   m_Direction: 1
   m_Center: {x: 0, y: 0.2031161, z: 0}
 --- !u!144 &2152209409011202302
@@ -1679,7 +1679,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.20230335
-  m_Height: 0.6743445
+  m_Height: 0.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.33717224, z: 0}
 --- !u!144 &2152209407597722029
@@ -2046,7 +2046,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.2023037
-  m_Height: 0.6743456
+  m_Height: 0.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.3371728, z: 0}
 --- !u!144 &2152209408499659636
@@ -2495,7 +2495,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.16695608
-  m_Height: 0.6678243
+  m_Height: 0.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.33391216, z: 0}
 --- !u!144 &2152209408135711925
@@ -2636,7 +2636,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.13556238
-  m_Height: 0.67781186
+  m_Height: 0.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.33890593, z: 0}
 --- !u!144 &2152209408547709625
@@ -2922,7 +2922,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 3
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -2983,6 +2983,7 @@ MonoBehaviour:
     pitch: 1.37
     loop: 0
     source: {fileID: 0}
+  canPlay: 0
 --- !u!1 &8056699267596744056
 GameObject:
   m_ObjectHideFlags: 0

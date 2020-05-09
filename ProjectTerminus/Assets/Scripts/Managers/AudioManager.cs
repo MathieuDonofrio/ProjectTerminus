@@ -13,7 +13,7 @@ public class AudioManager : MonoBehaviour
     private Sound currentAttackClip;
     private Sound currentDieClip;
 
-    public bool canPlay;
+    private bool canPlay;
 
     private void Start()
     {
@@ -73,7 +73,6 @@ public class AudioManager : MonoBehaviour
 
     public void PlayDeath()
     {
-        if (canPlay)
             currentDieClip.source.Play();
     }
 
