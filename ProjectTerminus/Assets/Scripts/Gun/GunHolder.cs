@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInputHandler))]
 [RequireComponent(typeof(PlayerController))]
 [RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(Economy))]
 public class GunHolder : MonoBehaviour
 {
     /* Configuration */
@@ -52,6 +53,8 @@ public class GunHolder : MonoBehaviour
 
     private AudioSource audioSource;
 
+    private Economy economy;
+
     /* State */
 
     [Header("Debug")]
@@ -69,6 +72,7 @@ public class GunHolder : MonoBehaviour
         inputHandler = GetComponent<PlayerInputHandler>();
         playerController = GetComponent<PlayerController>();
         audioSource = GetComponent<AudioSource>();
+        economy = GetComponent<Economy>();
 
         SetGun(false);
     }
@@ -298,11 +302,18 @@ public class GunHolder : MonoBehaviour
     /// Flags a hit and updates the hud controller accordingly
     /// </summary>
     /// <param name="kill">if the kill resulted in a kill</param>
-    public void LandedHit(bool kill)
+    public void LandedHit(bool kill, bool head)
     {
         hudController.Hitmarker(kill);
 
         audioSource.PlayOneShot(hitmarker);
+
+        int points = kill ? 100 : 10;
+
+        if (head) points *= 2;
+
+        economy.Transaction(points);
+        hudController.UpdateMoney(economy.balance, points);
     }
 
 }

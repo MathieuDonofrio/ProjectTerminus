@@ -5,13 +5,17 @@ using UnityEngine.AI;
 
 public class RagDollController : MonoBehaviour
 {
+
     private Collider mainCollider;
+
     private Collider[] allColliders;
 
     private void Awake()
     {
         mainCollider = GetComponent<Collider>();
         allColliders = GetComponentsInChildren<Collider>();
+
+        ActivateRagdoll(false);
     }
 
     public void ExplosionOnDeath(float force, float radius)
@@ -21,7 +25,8 @@ public class RagDollController : MonoBehaviour
 
         rb.isKinematic = false;
 
-      //  rb.AddExplosionForce(force, transform.position, radius);
+        // rb.AddExplosionForce(force, transform.position, radius);
+
         foreach (Rigidbody rigidbody in rbs)
         {
             rigidbody.AddExplosionForce(force, transform.position, radius);
@@ -36,7 +41,7 @@ public class RagDollController : MonoBehaviour
 
         mainCollider.enabled = !active;
 
-        GetComponent<NavMeshAgent>().enabled = false;
+        GetComponent<NavMeshAgent>().enabled = !active;
         GetComponent<Animator>().enabled = !active;
     }
     

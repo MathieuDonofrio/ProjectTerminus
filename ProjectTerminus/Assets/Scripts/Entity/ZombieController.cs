@@ -79,6 +79,7 @@ public class ZombieController : MonoBehaviour
         entity = GetComponent<Entity>();
         ragDollController = GetComponent<RagDollController>();
         audioManager = GetComponent<AudioManager>();
+
         entity.onDeath += OnDeath;
 
         SetTargetNearestPlayer();
@@ -131,9 +132,12 @@ public class ZombieController : MonoBehaviour
     private void OnDeath()
     {
         agent.enabled = false;
+
         audioManager.StopWalking();
         audioManager.PlayDeath();
+
         entity.Kill();
+
         ragDollController.ActivateRagdoll(true);
     }
 
@@ -157,6 +161,7 @@ public class ZombieController : MonoBehaviour
         // Toggle walking animation and handle sound
         animator.SetBool("attacking", true);
         animator.SetBool("walking", false);
+
         audioManager.StopWalking();
         audioManager.PlayAttack();
 
@@ -185,6 +190,7 @@ public class ZombieController : MonoBehaviour
 
         animator.SetBool("attacking", false);
         animator.SetBool("walking", true);
+
         audioManager.PlayWalking();
     }
 

@@ -10,6 +10,13 @@ public class Entity : MonoBehaviour
     [Tooltip("Current amount of health")]
     public float health;
 
+    [Header("Head Settings")]
+    [Tooltip("Eye height")]
+    public float eyeHeight = 1.8f;
+
+    [Tooltip("Head size")]
+    public float headSize = 0.3f;
+
     [Header("Health Settings")]
     [Tooltip("Maximum amount of health")]
     public float maxHealth = 10f;

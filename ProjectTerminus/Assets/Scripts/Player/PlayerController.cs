@@ -112,9 +112,6 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Sound played when landing")]
     public AudioClip landSFX;
 
-    [Tooltip("Sound played when breathing")]
-    public AudioClip breathSFX;
-
     [Tooltip("Sound played when heart is beating")]
     public AudioClip heartbeatSFX;
 
@@ -207,7 +204,6 @@ public class PlayerController : MonoBehaviour
 
         // SFX Specific
         FootstepSFX();
-        BreathingSFX();
         HeartbeatSFX();
 
 #if UNITY_EDITOR
@@ -448,11 +444,6 @@ public class PlayerController : MonoBehaviour
 
         // Record last heart beat
         lastHeartBeat = Time.time;
-    }
-
-    private void BreathingSFX()
-    {
-        // TODO
     }
 
     private void OnDamage(float damage, GameObject damager, DamageType damageType) 

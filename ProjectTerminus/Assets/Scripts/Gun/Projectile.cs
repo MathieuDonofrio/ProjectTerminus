@@ -64,11 +64,15 @@ public class Projectile : MonoBehaviour
                 {
                     float damage = shooter.damage + Random.value * shooter.randomDamage;
 
+                    bool headshot = Mathf.Abs(entity.transform.position.y + entity.eyeHeight - hit.point.y) <= entity.headSize;
+
+                    if (headshot) damage *= shooter.headshotModifier;
+
                     bool kill = entity.Damage(damage, shooter.gameObject, DamageType.PROJECTILE);
 
                     if (shooter.gunHolder != null)
                     {
-                        shooter.gunHolder.LandedHit(kill);
+                        shooter.gunHolder.LandedHit(kill, headshot);
                     }
 
                     DoImpact(entity);
