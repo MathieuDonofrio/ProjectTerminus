@@ -5,54 +5,90 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    public Sound[] sounds;
+    public Sound[] walkingClips;
+    public Sound[] attackClips;
+    public Sound[] dieClips;
+
+    private Sound currentWalkClip;
+    private Sound currentAttackClip;
+    private Sound currentDieClip;
+
+    public bool canPlay;
 
     private void Start()
     {
-        DontDestroyOnLoad(gameObject);
-        foreach (Sound s in sounds)
-        {
-            s.source = gameObject.AddComponent<AudioSource>();
-            s.source.clip = s.clip;
-
-            s.source.volume = s.volume;
-            s.source.pitch = s.pitch;
-            s.source.loop = s.loop;
-        }
-      /*  if (MySceneManager.Instance.CurrentLevelName != "LastLevel")
-        {
-            Play("Theme");
-        }*/
+        SetSounds();
+        canPlay = UnityEngine.Random.Range(0,3) == 0;
     }
 
-    public void DeathGame()
+    private void SetSounds()
     {
-        Stop("Theme");
-        Play("PlayerDeath");
+        // Set audiosource to all the clips
+        if (walkingClips.Length > 0 && dieClips.Length > 0 && attackClips.Length > 0)
+        {
+            foreach (Sound s in walkingClips)
+            {
+                s.source = gameObject.AddComponent<AudioSource>();
+                s.source.clip = s.clip;
+
+                s.source.volume = s.volume;
+                s.source.pitch = s.pitch;
+                s.source.loop = s.loop;
+            }
+
+            foreach (Sound s in attackClips)
+            {
+                s.source = gameObject.AddComponent<AudioSource>();
+                s.source.clip = s.clip;
+
+                s.source.volume = s.volume;
+                s.source.pitch = s.pitch;
+                s.source.loop = s.loop;
+            }
+
+            foreach (Sound s in dieClips)
+            {
+                s.source = gameObject.AddComponent<AudioSource>();
+                s.source.clip = s.clip;
+
+                s.source.volume = s.volume;
+                s.source.pitch = s.pitch;
+                s.source.loop = s.loop;
+            }
+
+            //Randomize clips
+            currentWalkClip = walkingClips[UnityEngine.Random.Range(0, walkingClips.Length - 1)];
+            currentDieClip = dieClips[UnityEngine.Random.Range(0, dieClips.Length - 1)];
+            currentAttackClip = attackClips[UnityEngine.Random.Range(0, attackClips.Length - 1)];
+        }
+        else
+            Debug.LogError("You must add clips to the character's audio manager");
     }
 
-    public void Play(string name)
+    public void PlayWalking()
     {
-        Sound s = Array.Find(sounds, Sound => Sound.name == name);
-        //GUARD CLAUSE
-        if (s == null)
-        {
-            Debug.LogWarning("Sound: " + name + " nout found!");
-            return;
-        }
-        s.source.Play();
-        Debug.Log("Im playing");
+        if (canPlay)
+            currentWalkClip.source.Play();
     }
 
-    public void Stop(string name)
+    public void PlayDeath()
     {
-        Sound s = Array.Find(sounds, Sound => Sound.name == name);
-        //GUARD CLAUSE
-        if (s == null)
-        {
-            Debug.LogWarning("Sound: " + name + " nout found!");
-            return;
-        }
-        s.source.Stop();
+        if (canPlay)
+            currentDieClip.source.Play();
     }
+
+    public void PlayAttack()
+    {
+        if (canPlay)
+            currentAttackClip.source.Play();
+    }
+
+
+
+    public void StopWalking()
+    {
+        if (canPlay)
+            currentWalkClip.source.Stop();
+    }
+
 }

@@ -7,6 +7,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Entity))]
 [RequireComponent(typeof(RagDollController))]
 [RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(AudioManager))]
 public class ZombieController : MonoBehaviour
 {
     /* Configuration */
@@ -69,6 +70,7 @@ public class ZombieController : MonoBehaviour
     /* Other */
 
     private bool attackSuccessfull;
+    private AudioManager audioManager;
 
     private void Start()
     {
@@ -76,13 +78,13 @@ public class ZombieController : MonoBehaviour
         animator = GetComponent<Animator>();
         entity = GetComponent<Entity>();
         ragDollController = GetComponent<RagDollController>();
-
+        audioManager = GetComponent<AudioManager>();
         entity.onDeath += OnDeath;
 
         SetTargetNearestPlayer();
 
         animator.SetBool("walking", true);
-        Invoke("PlayIdleSound",Random.Range(0f,2f));
+        audioManager.PlayWalking();
     }
 
     private void FixedUpdate()
@@ -128,11 +130,11 @@ public class ZombieController : MonoBehaviour
 
     private void OnDeath()
     {
-       
         agent.enabled = false;
+        audioManager.StopWalking();
+        audioManager.PlayDeath();
         entity.Kill();
         ragDollController.ActivateRagdoll(true);
-        //GetComponentInChildren<AudioManager>().Stop("walkingSound");
     }
 
     public void ExplosionOnDeath(float force,float radius)
@@ -145,15 +147,18 @@ public class ZombieController : MonoBehaviour
 
     private void StartAttack()
     {
+        
         // Stop agent
         agent.SetDestination(transform.position);
 
         // Update state
         IsAttacking = true;
 
-        // Toggle walking animation
+        // Toggle walking animation and handle sound
         animator.SetBool("attacking", true);
         animator.SetBool("walking", false);
+        audioManager.StopWalking();
+        audioManager.PlayAttack();
 
         // Reset attack success flag
         attackSuccessfull = false;
@@ -180,12 +185,9 @@ public class ZombieController : MonoBehaviour
 
         animator.SetBool("attacking", false);
         animator.SetBool("walking", true);
+        audioManager.PlayWalking();
     }
 
-    private void PlayIdleSound()
-    {
-       // GetComponentInChildren<AudioManager>().Play("walkingSound");
-    }
 
     private void UpdateSpeed()
     {
