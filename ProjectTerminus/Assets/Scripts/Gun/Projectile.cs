@@ -73,6 +73,8 @@ public class Projectile : MonoBehaviour
 
                     DoImpact(entity);
 
+                    pool.SpawnBloodSplat(hit.point, 2 + Mathf.RoundToInt(2 * Random.value));
+
                     landedHit = true;
                 }
             }

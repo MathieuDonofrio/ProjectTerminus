@@ -15,6 +15,9 @@ public class ProjectileHandler : MonoBehaviour
     [Tooltip("The particle system used for muzzle flash effects")]
     public ParticleSystem muzzleFlashParticleSystem;
 
+    [Tooltip("The particle system used for blood splat effects")]
+    public ParticleSystem bloodSplatSystem;
+
     [Tooltip("The amount of projectiles to pre instanciate")]
     public float preInstanciatedProjectiles = 8;
 
@@ -116,6 +119,21 @@ public class ProjectileHandler : MonoBehaviour
         emitParams.velocity = velocity;
 
         muzzleFlashParticleSystem.Emit(emitParams, 1);
+    }
+
+    public void SpawnBloodSplat(Vector3 position, int amount)
+    {
+        if (bloodSplatSystem == null)
+            return;
+
+        var emitParams = new ParticleSystem.EmitParams();
+
+        emitParams.position = position;
+
+        for(int i = 0; i < amount; i++)
+        {
+            bloodSplatSystem.Emit(emitParams, 1);
+        }
     }
 
     public void CheckIn(Projectile projectile)
