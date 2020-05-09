@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Profiling.Memory.Experimental;
+using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Entity))]
-[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(RagDollController))]
+[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(AudioManager))]
 public class ZombieController : MonoBehaviour
 {
     /* Configuration */
@@ -15,9 +18,6 @@ public class ZombieController : MonoBehaviour
 
     [Tooltip("Speed multiplier for movement and animations")]
     public float rage = 1.0f;
-
-    [Tooltip("The amount of time the zombie will be stunned after being shot")]
-    public float shotStunDuration = 0.2f;
 
     [Header("Target Settings")]
     [Tooltip("The maximum range the zombie can attack from")]
@@ -45,10 +45,6 @@ public class ZombieController : MonoBehaviour
     [Tooltip("Amount of random damage added to base damage per attack")]
     public float randomAttackDamage = 1.0f;
 
-    [Header("Audio Clips")]
-    [Tooltip("Sound played when zombie gets hurt")]
-    public AudioClip hurt;
-
     /* Required Components */
 
     private NavMeshAgent agent;
@@ -57,7 +53,7 @@ public class ZombieController : MonoBehaviour
 
     private Animator animator;
 
-    private AudioSource audioSouce;
+    private RagDollController ragDollController;
 
     /* State */
 
@@ -71,25 +67,24 @@ public class ZombieController : MonoBehaviour
 
     private float lastAttackTime = Mathf.NegativeInfinity;
 
-    private float lastShotTime = Mathf.NegativeInfinity;
-
     /* Other */
 
     private bool attackSuccessfull;
+    private AudioManager audioManager;
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         entity = GetComponent<Entity>();
-        audioSouce = GetComponent<AudioSource>();
-
+        ragDollController = GetComponent<RagDollController>();
+        audioManager = GetComponent<AudioManager>();
         entity.onDeath += OnDeath;
-        entity.onDamaged += OnDamage;
 
         SetTargetNearestPlayer();
 
         animator.SetBool("walking", true);
+        audioManager.PlayWalking();
     }
 
     private void FixedUpdate()
@@ -102,7 +97,7 @@ public class ZombieController : MonoBehaviour
 
             UpdateSpeed();
 
-            if(!IsAttacking && !agent.isStopped && agent.destination != TargetEntity.transform.position)
+            if(!IsAttacking && agent.destination != TargetEntity.transform.position)
             {
                 agent.SetDestination(TargetEntity.transform.position);
             }
@@ -124,10 +119,6 @@ public class ZombieController : MonoBehaviour
                 StartAttack();
             }
 
-            if(agent.isStopped && Time.time - lastShotTime >= shotStunDuration)
-            {
-                agent.isStopped = false;
-            }
 
             Vector3 targetDirection = TargetEntity.transform.position - transform.position;
 
@@ -139,45 +130,35 @@ public class ZombieController : MonoBehaviour
 
     private void OnDeath()
     {
-        // Stop agent
-        agent.isStopped = true;
-
-        // Update state
-        IsAttacking = false;
-
-        // Stop animations
-        animator.SetBool("walking", false);
-        animator.SetBool("attacking", false);
-
-        // Start death animation
-        //animator.SetBool("dying", true);
-
-        Destroy(gameObject); // TODO temporary
+        agent.enabled = false;
+        audioManager.StopWalking();
+        audioManager.PlayDeath();
+        entity.Kill();
+        ragDollController.ActivateRagdoll(true);
     }
 
-    private void OnDamage(float damage, GameObject shooter, DamageType type)
+    public void ExplosionOnDeath(float force,float radius)
     {
-        if(type == DamageType.PROJECTILE)
-        {
-            agent.isStopped = true;
+        OnDeath();
 
-            audioSouce.PlayOneShot(hurt);
+        ragDollController.ExplosionOnDeath(force,radius);
 
-            lastAttackTime = Time.time;
-        }
     }
 
     private void StartAttack()
     {
+        
         // Stop agent
         agent.SetDestination(transform.position);
 
         // Update state
         IsAttacking = true;
 
-        // Toggle walking animation
+        // Toggle walking animation and handle sound
         animator.SetBool("attacking", true);
         animator.SetBool("walking", false);
+        audioManager.StopWalking();
+        audioManager.PlayAttack();
 
         // Reset attack success flag
         attackSuccessfull = false;
@@ -204,7 +185,9 @@ public class ZombieController : MonoBehaviour
 
         animator.SetBool("attacking", false);
         animator.SetBool("walking", true);
+        audioManager.PlayWalking();
     }
+
 
     private void UpdateSpeed()
     {
