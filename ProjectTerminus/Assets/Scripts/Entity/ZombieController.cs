@@ -7,7 +7,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Entity))]
 [RequireComponent(typeof(RagDollController))]
 [RequireComponent(typeof(Collider))]
-[RequireComponent(typeof(AudioManager))]
+[RequireComponent(typeof(ZombieAudioManager))]
 public class ZombieController : MonoBehaviour
 {
     /* Configuration */
@@ -70,7 +70,7 @@ public class ZombieController : MonoBehaviour
     /* Other */
 
     private bool attackSuccessfull;
-    private AudioManager audioManager;
+    private ZombieAudioManager audioManager;
 
     private void Start()
     {
@@ -78,7 +78,7 @@ public class ZombieController : MonoBehaviour
         animator = GetComponent<Animator>();
         entity = GetComponent<Entity>();
         ragDollController = GetComponent<RagDollController>();
-        audioManager = GetComponent<AudioManager>();
+        audioManager = GetComponent<ZombieAudioManager>();
 
         entity.onDeath += OnDeath;
 

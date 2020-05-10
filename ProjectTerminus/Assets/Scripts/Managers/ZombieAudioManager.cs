@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class ZombieAudioManager  : MonoBehaviour
 {
     public Sound[] walkingClips;
     public Sound[] attackClips;

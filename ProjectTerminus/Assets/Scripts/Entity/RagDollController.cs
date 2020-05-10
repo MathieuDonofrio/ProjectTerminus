@@ -9,13 +9,14 @@ public class RagDollController : MonoBehaviour
     private Collider mainCollider;
 
     private Collider[] allColliders;
+    private Rigidbody[] allRigidBodies;
 
     private void Awake()
     {
         mainCollider = GetComponent<Collider>();
         allColliders = GetComponentsInChildren<Collider>();
-
-        ActivateRagdoll(false);
+        allRigidBodies = GetComponentsInChildren<Rigidbody>();
+        DeactivateColliders();
     }
 
     public void ExplosionOnDeath(float force, float radius)
@@ -24,7 +25,7 @@ public class RagDollController : MonoBehaviour
         Rigidbody[] rbs = GetComponentsInChildren<Rigidbody>();
 
         rb.isKinematic = false;
-
+        rb.useGravity = true;
         // rb.AddExplosionForce(force, transform.position, radius);
 
         foreach (Rigidbody rigidbody in rbs)
@@ -39,10 +40,25 @@ public class RagDollController : MonoBehaviour
         foreach (var col in allColliders)
             col.enabled = active;
 
+        foreach (var rig in allRigidBodies)
+        {
+            rig.isKinematic = false;
+            rig.useGravity = true;
+        }
+
         mainCollider.enabled = !active;
 
         GetComponent<NavMeshAgent>().enabled = !active;
         GetComponent<Animator>().enabled = !active;
+    }
+
+    private void DeactivateColliders()
+    {
+        foreach (var rig in allRigidBodies)
+        {
+            rig.isKinematic = true;
+            rig.useGravity = false;
+        }
     }
     
 }
