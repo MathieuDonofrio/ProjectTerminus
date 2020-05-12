@@ -21,14 +21,7 @@ public class RagDollController : MonoBehaviour
 
     public void ExplosionOnDeath(float force, float radius)
     {
-        Rigidbody rb = GetComponent<Rigidbody>();
-        Rigidbody[] rbs = GetComponentsInChildren<Rigidbody>();
-
-        rb.isKinematic = false;
-        rb.useGravity = true;
-        // rb.AddExplosionForce(force, transform.position, radius);
-
-        foreach (Rigidbody rigidbody in rbs)
+        foreach (Rigidbody rigidbody in allRigidBodies)
         {
             rigidbody.AddExplosionForce(force, transform.position, radius);
         }
