@@ -2543,11 +2543,14 @@ MonoBehaviour:
   attackRange: 2
   startAttackRange: 2
   lookSpeed: 0.2
+  spawnDuration: 4
   attackDelay: 3
   attackDuration: 2
   attackHitDelay: 1
   attackDamage: 2
   randomAttackDamage: 1
+  SpawningEffect: {fileID: 5489393081380355896, guid: 7018cdec0a516354fa2117c3466e69dd,
+    type: 3}
 --- !u!95 &4149956126782693557
 Animator:
   serializedVersion: 3

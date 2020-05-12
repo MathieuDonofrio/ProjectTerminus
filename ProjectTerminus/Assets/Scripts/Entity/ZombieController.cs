@@ -29,6 +29,9 @@ public class ZombieController : MonoBehaviour
     [Tooltip("Amount of seconds for head rotation to look at a position")]
     public float lookSpeed = 0.2f;
 
+    [Tooltip("Amount of seconds the spawning lasts")]
+    public float spawnDuration = 5.0f;
+
     [Header("Attack Settings")]
     [Tooltip("Minimum amount of seconds between each attack")]
     public float attackDelay= 3f;
@@ -55,17 +58,23 @@ public class ZombieController : MonoBehaviour
 
     private RagDollController ragDollController;
 
+    public GameObject SpawningEffect;
+
     /* State */
 
     public Entity TargetEntity { get; private set; }
 
     public bool IsAttacking { get; private set; }
 
+    public bool IsSpawning { get; set; }
+
     public bool Enabled { get; set; }
 
     /* Timestamps */
 
     private float lastAttackTime = Mathf.NegativeInfinity;
+    private float lastSpawnTime = Mathf.NegativeInfinity;
+    
 
     /* Other */
 
@@ -82,16 +91,18 @@ public class ZombieController : MonoBehaviour
 
         entity.onDeath += OnDeath;
 
-        SetTargetNearestPlayer();
-
-        animator.SetBool("walking", true);
-        audioManager.PlayWalking();
+        StartSpawnZombie();
     }
 
     private void FixedUpdate()
     {
         if (!enabled)
             return;
+
+        if (IsSpawning && Time.time - lastSpawnTime >= spawnDuration)
+        {
+            FinishSpawnZombie();
+        }
 
         if (!entity.IsDead && TargetEntity != null)
         {
@@ -102,6 +113,7 @@ public class ZombieController : MonoBehaviour
             {
                 agent.SetDestination(TargetEntity.transform.position);
             }
+
 
             if (IsAttacking)
             {
@@ -239,6 +251,27 @@ public class ZombieController : MonoBehaviour
         float sqrDistance = (TargetEntity.transform.position - transform.position).sqrMagnitude;
 
         return sqrDistance < attackRange * attackRange;
+    }
+
+    public void StartSpawnZombie()
+    {
+        IsSpawning = true;
+        SpawningEffect = Instantiate(SpawningEffect, entity.transform);
+        animator.SetBool("rising",true);
+
+        lastSpawnTime = Time.time;
+    }
+
+    public void FinishSpawnZombie()
+    {
+        Debug.Log("im finishing");
+        IsSpawning = false;
+        Destroy(SpawningEffect);
+        SetTargetNearestPlayer();
+
+        animator.SetBool("rising", false);
+        animator.SetBool("walking", true);
+        audioManager.PlayWalking();
     }
 
 }
