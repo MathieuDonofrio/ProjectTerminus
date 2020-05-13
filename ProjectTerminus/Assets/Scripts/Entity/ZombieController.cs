@@ -6,7 +6,6 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Entity))]
 [RequireComponent(typeof(RagDollController))]
-[RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(AudioManager))]
 public class ZombieController : MonoBehaviour
 {
@@ -55,6 +54,8 @@ public class ZombieController : MonoBehaviour
 
     private RagDollController ragDollController;
 
+    private AudioManager audioManager;
+
     /* State */
 
     public Entity TargetEntity { get; private set; }
@@ -67,10 +68,11 @@ public class ZombieController : MonoBehaviour
 
     private float lastAttackTime = Mathf.NegativeInfinity;
 
+    private float lastScreamTime = Mathf.NegativeInfinity;
+
     /* Other */
 
     private bool attackSuccessfull;
-    private AudioManager audioManager;
 
     private void Start()
     {
@@ -85,7 +87,8 @@ public class ZombieController : MonoBehaviour
         SetTargetNearestPlayer();
 
         animator.SetBool("walking", true);
-        audioManager.PlayWalking();
+
+        Enabled = false;
     }
 
     private void FixedUpdate()
@@ -95,10 +98,9 @@ public class ZombieController : MonoBehaviour
 
         if (!entity.IsDead && TargetEntity != null)
         {
-
             UpdateSpeed();
 
-            if(!IsAttacking && agent.destination != TargetEntity.transform.position)
+            if(!IsAttacking && agent.destination != TargetEntity.transform.position && agent.enabled)
             {
                 agent.SetDestination(TargetEntity.transform.position);
             }
@@ -113,20 +115,30 @@ public class ZombieController : MonoBehaviour
                 {
                     Attack();
                 }
-
             }
             else if(Time.time - lastAttackTime >= attackDelay / rage && IsWithinAttackRange(startAttackRange))
             {
                 StartAttack();
             }
 
-
             Vector3 targetDirection = TargetEntity.transform.position - transform.position;
 
             transform.rotation = Quaternion.Slerp(transform.rotation, 
                 Quaternion.LookRotation(targetDirection), Time.fixedDeltaTime / lookSpeed);
+
+            HandleScreams();
         }
 
+    }
+
+    private void HandleScreams()
+    {
+        if(Time.time - lastScreamTime >= 4 && Random.value > 0.01)
+        {
+            audioManager.PlayWalking();
+
+            lastScreamTime = Time.time;
+        }
     }
 
     private void OnDeath()
@@ -241,4 +253,15 @@ public class ZombieController : MonoBehaviour
         return sqrDistance < attackRange * attackRange;
     }
 
+    public bool IsDead()
+    {
+        return entity == null ? false : entity.IsDead;
+    }
+
+    public void Revive()
+    {
+        ragDollController.ActivateRagdoll(false);
+
+        entity.Revive();
+    }
 }

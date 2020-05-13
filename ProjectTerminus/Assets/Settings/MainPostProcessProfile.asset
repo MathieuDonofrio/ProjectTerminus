@@ -92,6 +92,8 @@ MonoBehaviour:
   m_Name: GrayScale
   m_EditorClassIdentifier: Assembly-CSharp::GrayScale
   health: 0
+  eyeHeight: 1.8
+  headSize: 0.3
   maxHealth: 10
   invincible: 0
   damageMultiplier: 1

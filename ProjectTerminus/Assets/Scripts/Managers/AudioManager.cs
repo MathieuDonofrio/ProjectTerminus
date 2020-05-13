@@ -1,8 +1,9 @@
-﻿using System;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour
 {
     public Sound[] walkingClips;
@@ -13,81 +14,80 @@ public class AudioManager : MonoBehaviour
     private Sound currentAttackClip;
     private Sound currentDieClip;
 
-    private bool canPlay;
+    private AudioSource audioSource;
 
     private void Start()
     {
-        SetSounds();
-        canPlay = UnityEngine.Random.Range(0,3) == 0;
-    }
+        audioSource = GetComponent<AudioSource>();
 
-    private void SetSounds()
-    {
-        // Set audiosource to all the clips
-        if (walkingClips.Length > 0 && dieClips.Length > 0 && attackClips.Length > 0)
-        {
-            foreach (Sound s in walkingClips)
-            {
-                s.source = gameObject.AddComponent<AudioSource>();
-                s.source.clip = s.clip;
-
-                s.source.volume = s.volume;
-                s.source.pitch = s.pitch;
-                s.source.loop = s.loop;
-            }
-
-            foreach (Sound s in attackClips)
-            {
-                s.source = gameObject.AddComponent<AudioSource>();
-                s.source.clip = s.clip;
-
-                s.source.volume = s.volume;
-                s.source.pitch = s.pitch;
-                s.source.loop = s.loop;
-            }
-
-            foreach (Sound s in dieClips)
-            {
-                s.source = gameObject.AddComponent<AudioSource>();
-                s.source.clip = s.clip;
-
-                s.source.volume = s.volume;
-                s.source.pitch = s.pitch;
-                s.source.loop = s.loop;
-            }
-
-            //Randomize clips
-            currentWalkClip = walkingClips[UnityEngine.Random.Range(0, walkingClips.Length - 1)];
-            currentDieClip = dieClips[UnityEngine.Random.Range(0, dieClips.Length - 1)];
-            currentAttackClip = attackClips[UnityEngine.Random.Range(0, attackClips.Length - 1)];
-        }
-        else
-            Debug.LogError("You must add clips to the character's audio manager");
+        // Always walks the same
+        currentWalkClip = walkingClips[Mathf.FloorToInt(Random.value * walkingClips.Length)];
     }
 
     public void PlayWalking()
     {
-        if (canPlay)
-            currentWalkClip.source.Play();
+        if (audioSource == null)
+            return;
+
+        audioSource.volume = currentWalkClip.volume;
+        audioSource.pitch = currentWalkClip.pitch;
+        audioSource.loop = currentWalkClip.loop;
+
+        audioSource.clip = currentWalkClip.clip;
+
+        audioSource.PlayOneShot(currentWalkClip.clip);
     }
 
     public void PlayDeath()
     {
-            currentDieClip.source.Play();
+        if (audioSource == null)
+            return;
+
+        currentDieClip = dieClips[Mathf.FloorToInt(Random.value * dieClips.Length)];
+
+        audioSource.volume = currentDieClip.volume;
+        audioSource.pitch = currentDieClip.pitch;
+        audioSource.loop = currentDieClip.loop;
+
+        audioSource.clip = currentDieClip.clip;
+
+        audioSource.PlayOneShot(currentDieClip.clip);
     }
 
     public void PlayAttack()
     {
-        if (canPlay)
-            currentAttackClip.source.Play();
+        if (audioSource == null)
+            return;
+
+        currentAttackClip = attackClips[Mathf.FloorToInt(Random.value * attackClips.Length)];
+
+        audioSource.volume = currentAttackClip.volume;
+        audioSource.pitch = currentAttackClip.pitch;
+        audioSource.loop = currentAttackClip.loop;
+
+        audioSource.PlayOneShot(currentAttackClip.clip);
     }
-
-
 
     public void StopWalking()
     {
-        if (canPlay)
-            currentWalkClip.source.Stop();
+        if (audioSource == null)
+            return;
+
+        audioSource.Stop();
     }
 
+}
+
+[System.Serializable]
+public class Sound
+{
+    public AudioClip clip;
+
+    [Range(0f, 1f)]
+    public float volume;
+
+    [Range(.1f, 3f)]
+    public float pitch;
+
+    public bool loop;
 }
