@@ -251,7 +251,7 @@ GameObject:
   - component: {fileID: 130029714}
   - component: {fileID: 130029713}
   m_Layer: 5
-  m_Name: HighScoreText (1)
+  m_Name: RoundSurvived
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -273,7 +273,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -203.15, y: 26.545013}
+  m_AnchoredPosition: {x: -560.5508, y: 403}
   m_SizeDelta: {x: 280.58154, y: 35.131042}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &130029713
@@ -289,17 +289,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.24626164, g: 0.5377358, b: 0.06848522, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 25
+    m_FontSize: 20
     m_FontStyle: 1
     m_BestFit: 0
-    m_MinSize: 2
+    m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -487,6 +487,7 @@ GameObject:
   - component: {fileID: 753747988}
   - component: {fileID: 753747990}
   - component: {fileID: 753747989}
+  - component: {fileID: 753747991}
   m_Layer: 5
   m_Name: LoseMenu
   m_TagString: Untagged
@@ -553,6 +554,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 753747987}
   m_CullTransparentMesh: 0
+--- !u!95 &753747991
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 753747987}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2c9f42148722f1d4d9ab41a329198198, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &854006381
 GameObject:
   m_ObjectHideFlags: 0
@@ -565,7 +585,7 @@ GameObject:
   - component: {fileID: 854006384}
   - component: {fileID: 854006383}
   m_Layer: 5
-  m_Name: YouLoseText
+  m_Name: YouDiedText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -621,7 +641,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: YOU LOSE
+  m_Text: YOU DIED
 --- !u!222 &854006384
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -756,8 +776,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 87.696655, y: 26.545013}
-  m_SizeDelta: {x: 175.39331, y: 53.090027}
+  m_AnchoredPosition: {x: 121.39844, y: 17.566406}
+  m_SizeDelta: {x: 242.79791, y: 35.131042}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1736905522
 MonoBehaviour:
@@ -779,10 +799,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 30
+    m_FontSize: 25
     m_FontStyle: 1
     m_BestFit: 0
-    m_MinSize: 3
+    m_MinSize: 2
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -790,7 +810,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'High Score:'
+  m_Text: 'HIGH SCORE:'
 --- !u!222 &1736905523
 CanvasRenderer:
   m_ObjectHideFlags: 0
