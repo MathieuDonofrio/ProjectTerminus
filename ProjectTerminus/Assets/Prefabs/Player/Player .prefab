@@ -3247,9 +3247,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 700195ee1f88f3a4184bb07db7ea2046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 10
   eyeHeight: 1.8
   headSize: 0.3
-  health: 10
   maxHealth: 10
   invincible: 0
   damageMultiplier: 1
@@ -3328,7 +3328,6 @@ MonoBehaviour:
   rightFootstepSFX: {fileID: 8300000, guid: 2b97fd6b3552fbd42bf4633a6b362a98, type: 3}
   jumpSFX: {fileID: 8300000, guid: 6925eb55f4744d04598d3a6cf0cf91e8, type: 3}
   landSFX: {fileID: 8300000, guid: 64727cf301351c84e88366f82bd4a2e8, type: 3}
-  breathSFX: {fileID: 0}
   heartbeatSFX: {fileID: 8300000, guid: 6499fa264478a93488a1b015150f42bf, type: 3}
   gunHolder: {fileID: 2594210540102958815}
   hudController: {fileID: 2594210539754414090}

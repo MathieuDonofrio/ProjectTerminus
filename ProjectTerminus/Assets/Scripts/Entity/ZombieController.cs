@@ -1,13 +1,11 @@
-﻿using UnityEditor.Profiling.Memory.Experimental;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Entity))]
-[RequireComponent(typeof(RagDollController))]
-[RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(ZombieAudioManager))]
+[RequireComponent(typeof(Collider))]
 public class ZombieController : MonoBehaviour
 {
     /* Configuration */
@@ -30,7 +28,7 @@ public class ZombieController : MonoBehaviour
     public float lookSpeed = 0.2f;
 
     [Tooltip("Amount of seconds the spawning lasts")]
-    public float spawnDuration = 5.0f;
+    public float spawnDuration = 2.0f;
 
     [Header("Attack Settings")]
     [Tooltip("Minimum amount of seconds between each attack")]
@@ -56,9 +54,7 @@ public class ZombieController : MonoBehaviour
 
     private Animator animator;
 
-    private RagDollController ragDollController;
-
-    public GameObject SpawningEffect;
+    private ZombieAudioManager audioManager;
 
     /* State */
 
@@ -73,20 +69,20 @@ public class ZombieController : MonoBehaviour
     /* Timestamps */
 
     private float lastAttackTime = Mathf.NegativeInfinity;
+
     private float lastSpawnTime = Mathf.NegativeInfinity;
     
+    private float lastScreamTime = Mathf.NegativeInfinity;
 
     /* Other */
 
     private bool attackSuccessfull;
-    private ZombieAudioManager audioManager;
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         entity = GetComponent<Entity>();
-        ragDollController = GetComponent<RagDollController>();
         audioManager = GetComponent<ZombieAudioManager>();
 
         entity.onDeath += OnDeath;
@@ -99,21 +95,14 @@ public class ZombieController : MonoBehaviour
         if (!enabled)
             return;
 
-        if (IsSpawning && Time.time - lastSpawnTime >= spawnDuration)
-        {
-            FinishSpawnZombie();
-        }
-
         if (!entity.IsDead && TargetEntity != null)
         {
-
             UpdateSpeed();
 
-            if(!IsAttacking && agent.destination != TargetEntity.transform.position)
+            if(!IsAttacking && agent.destination != TargetEntity.transform.position && agent.enabled)
             {
                 agent.SetDestination(TargetEntity.transform.position);
             }
-
 
             if (IsAttacking)
             {
@@ -125,45 +114,29 @@ public class ZombieController : MonoBehaviour
                 {
                     Attack();
                 }
-
             }
             else if(Time.time - lastAttackTime >= attackDelay / rage && IsWithinAttackRange(startAttackRange))
             {
                 StartAttack();
             }
 
-
             Vector3 targetDirection = TargetEntity.transform.position - transform.position;
 
             transform.rotation = Quaternion.Slerp(transform.rotation, 
                 Quaternion.LookRotation(targetDirection), Time.fixedDeltaTime / lookSpeed);
+
+            HandleScreams();
         }
 
-    }
-
-    private void OnDeath()
-    {
-        agent.enabled = false;
-
-        audioManager.StopWalking();
-        audioManager.PlayDeath();
-
-        entity.Kill();
-
-        ragDollController.ActivateRagdoll(true);
-    }
-
-    public void ExplosionOnDeath(float force,float radius)
-    {
-        OnDeath();
-
-        ragDollController.ExplosionOnDeath(force,radius);
+        if (IsSpawning && Time.time - lastSpawnTime >= spawnDuration)
+        {
+            FinishSpawnZombie();
+        }
 
     }
 
     private void StartAttack()
     {
-        
         // Stop agent
         agent.SetDestination(transform.position);
 
@@ -206,6 +179,26 @@ public class ZombieController : MonoBehaviour
         audioManager.PlayWalking();
     }
 
+    public void StartSpawnZombie()
+    {
+        animator.SetBool("rising", true);
+
+        lastSpawnTime = Time.time;
+
+        IsSpawning = true;
+    }
+
+    public void FinishSpawnZombie()
+    {
+        IsSpawning = false;
+
+        SetTargetNearestPlayer();
+
+        animator.SetBool("rising", false);
+        animator.SetBool("walking", true);
+
+        audioManager.PlayWalking();
+    }
 
     private void UpdateSpeed()
     {
@@ -213,6 +206,24 @@ public class ZombieController : MonoBehaviour
 
         if (agent.speed != speed) agent.speed = speed;
         if (animator.speed != rage) animator.speed = rage;
+    }
+
+    private void HandleScreams()
+    {
+        if (Time.time - lastScreamTime >= 4 && Random.value > 0.01)
+        {
+            audioManager.PlayWalking();
+
+            lastScreamTime = Time.time;
+        }
+    }
+
+    private void OnDeath()
+    {
+        agent.enabled = false;
+
+        audioManager.StopWalking();
+        audioManager.PlayDeath();
     }
 
     /* Services */
@@ -253,25 +264,14 @@ public class ZombieController : MonoBehaviour
         return sqrDistance < attackRange * attackRange;
     }
 
-    public void StartSpawnZombie()
+    public bool IsDead()
     {
-        IsSpawning = true;
-        SpawningEffect = Instantiate(SpawningEffect, entity.transform);
-        animator.SetBool("rising",true);
-
-        lastSpawnTime = Time.time;
+        return entity == null ? false : entity.IsDead;
     }
 
-    public void FinishSpawnZombie()
+    public void Revive()
     {
-        Debug.Log("im finishing");
-        IsSpawning = false;
-        Destroy(SpawningEffect);
-        SetTargetNearestPlayer();
-
-        animator.SetBool("rising", false);
-        animator.SetBool("walking", true);
-        audioManager.PlayWalking();
+        entity.Revive();
     }
 
 }

@@ -145,6 +145,16 @@ public class Entity : MonoBehaviour
         }
     }
 
+    public void Revive()
+    {
+        if (!IsDead)
+            return;
+
+        IsDead = false;
+
+        health = maxHealth;
+    }
+
     public float HealthRatio()
     {
         return health / maxHealth;

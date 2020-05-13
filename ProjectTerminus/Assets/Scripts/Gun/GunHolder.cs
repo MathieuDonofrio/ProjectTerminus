@@ -308,9 +308,7 @@ public class GunHolder : MonoBehaviour
 
         audioSource.PlayOneShot(hitmarker);
 
-        int points = kill ? 100 : 10;
-
-        if (head) points *= 2;
+        int points = kill ? head ? 70 : 40 : 10;
 
         economy.Transaction(points);
         hudController.UpdateMoney(economy.balance, points);

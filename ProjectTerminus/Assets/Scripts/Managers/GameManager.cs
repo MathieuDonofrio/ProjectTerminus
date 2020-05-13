@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (waveManager.isGameOver)
+        if (waveManager.IsGameOver)
         {
             EndGame();
         }
