@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class StateMachine<T> : Singleton<T> where T:StateMachine<T>
+public class NewBehaviourScript : MonoBehaviour
 {
     // Start is called before the first frame update
-    protected State State;
-
-    public void SetState(State state)
+    void Start()
     {
-        State = state;
-        StartCoroutine(State.Start());
+        
     }
-   
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
 }

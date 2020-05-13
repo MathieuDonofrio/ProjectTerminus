@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PauseMenu : StateMachine<PauseMenu>
+public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
-    public GameObject MyCanvas;
+    public GameObject MyPanel;
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button menuButton;
     [SerializeField] private Button quitButton;
 
 
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
         DontDestroyOnLoad(gameObject);
     }
     // Start is called before the first frame update
@@ -50,7 +49,7 @@ public class PauseMenu : StateMachine<PauseMenu>
 
     void ResumeGame()
     {
-        MyCanvas.SetActive(false);
+        MyPanel.SetActive(false);
         TimeManager.CancelEffect();
       //  FindObjectOfType<AudioManager>().Play("Theme");
         GameIsPaused = false;
@@ -59,18 +58,13 @@ public class PauseMenu : StateMachine<PauseMenu>
 
     void MainMenu()
     {
-        
-       // SetState(new EndGame());
-        MyCanvas.SetActive(false);
-        TimeManager.CancelEffect();
-        foreach (GameObject gameObjects in FindObjectsOfType<GameObject>())
-        {
-            Destroy(gameObjects);
-        }
+        //end the game
+        FindObjectOfType<GameManager>().EndGame();
+
     }
     void Pause()
     {
-        MyCanvas.SetActive(true);
+        MyPanel.SetActive(true);
        // FindObjectOfType<AudioManager>().Stop("Theme");
         TimeManager.PauseGame();
         GameIsPaused = true;

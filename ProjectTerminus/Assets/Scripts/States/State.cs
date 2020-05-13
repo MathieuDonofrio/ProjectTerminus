@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class State
+public class State : MonoBehaviour
 {
-    public virtual IEnumerator Start()
+    // Start is called before the first frame update
+    void Start()
     {
-        yield break;
+        
     }
-   
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
 }

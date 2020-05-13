@@ -1,12 +1,11 @@
-﻿using UnityEditor.Profiling.Memory.Experimental;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Entity))]
-[RequireComponent(typeof(RagDollController))]
-[RequireComponent(typeof(AudioManager))]
+[RequireComponent(typeof(ZombieAudioManager))]
+[RequireComponent(typeof(Collider))]
 public class ZombieController : MonoBehaviour
 {
     /* Configuration */
@@ -27,6 +26,9 @@ public class ZombieController : MonoBehaviour
 
     [Tooltip("Amount of seconds for head rotation to look at a position")]
     public float lookSpeed = 0.2f;
+
+    [Tooltip("Amount of seconds the spawning lasts")]
+    public float spawnDuration = 2.0f;
 
     [Header("Attack Settings")]
     [Tooltip("Minimum amount of seconds between each attack")]
@@ -52,9 +54,7 @@ public class ZombieController : MonoBehaviour
 
     private Animator animator;
 
-    private RagDollController ragDollController;
-
-    private AudioManager audioManager;
+    private ZombieAudioManager audioManager;
 
     /* State */
 
@@ -62,12 +62,16 @@ public class ZombieController : MonoBehaviour
 
     public bool IsAttacking { get; private set; }
 
+    public bool IsSpawning { get; set; }
+
     public bool Enabled { get; set; }
 
     /* Timestamps */
 
     private float lastAttackTime = Mathf.NegativeInfinity;
 
+    private float lastSpawnTime = Mathf.NegativeInfinity;
+    
     private float lastScreamTime = Mathf.NegativeInfinity;
 
     /* Other */
@@ -79,16 +83,11 @@ public class ZombieController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         entity = GetComponent<Entity>();
-        ragDollController = GetComponent<RagDollController>();
-        audioManager = GetComponent<AudioManager>();
+        audioManager = GetComponent<ZombieAudioManager>();
 
         entity.onDeath += OnDeath;
 
-        SetTargetNearestPlayer();
-
-        animator.SetBool("walking", true);
-
-        Enabled = false;
+        StartSpawnZombie();
     }
 
     private void FixedUpdate()
@@ -129,41 +128,15 @@ public class ZombieController : MonoBehaviour
             HandleScreams();
         }
 
-    }
-
-    private void HandleScreams()
-    {
-        if(Time.time - lastScreamTime >= 4 && Random.value > 0.01)
+        if (IsSpawning && Time.time - lastSpawnTime >= spawnDuration)
         {
-            audioManager.PlayWalking();
-
-            lastScreamTime = Time.time;
+            FinishSpawnZombie();
         }
-    }
-
-    private void OnDeath()
-    {
-        agent.enabled = false;
-
-        audioManager.StopWalking();
-        audioManager.PlayDeath();
-
-        entity.Kill();
-
-        ragDollController.ActivateRagdoll(true);
-    }
-
-    public void ExplosionOnDeath(float force,float radius)
-    {
-        OnDeath();
-
-        ragDollController.ExplosionOnDeath(force,radius);
 
     }
 
     private void StartAttack()
     {
-        
         // Stop agent
         agent.SetDestination(transform.position);
 
@@ -206,6 +179,26 @@ public class ZombieController : MonoBehaviour
         audioManager.PlayWalking();
     }
 
+    public void StartSpawnZombie()
+    {
+        animator.SetBool("rising", true);
+
+        lastSpawnTime = Time.time;
+
+        IsSpawning = true;
+    }
+
+    public void FinishSpawnZombie()
+    {
+        IsSpawning = false;
+
+        SetTargetNearestPlayer();
+
+        animator.SetBool("rising", false);
+        animator.SetBool("walking", true);
+
+        audioManager.PlayWalking();
+    }
 
     private void UpdateSpeed()
     {
@@ -213,6 +206,24 @@ public class ZombieController : MonoBehaviour
 
         if (agent.speed != speed) agent.speed = speed;
         if (animator.speed != rage) animator.speed = rage;
+    }
+
+    private void HandleScreams()
+    {
+        if (Time.time - lastScreamTime >= 4 && Random.value > 0.01)
+        {
+            audioManager.PlayWalking();
+
+            lastScreamTime = Time.time;
+        }
+    }
+
+    private void OnDeath()
+    {
+        agent.enabled = false;
+
+        audioManager.StopWalking();
+        audioManager.PlayDeath();
     }
 
     /* Services */
@@ -260,8 +271,7 @@ public class ZombieController : MonoBehaviour
 
     public void Revive()
     {
-        ragDollController.ActivateRagdoll(false);
-
         entity.Revive();
     }
+
 }

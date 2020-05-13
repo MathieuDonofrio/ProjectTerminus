@@ -1822,14 +1822,12 @@ GameObject:
   m_Component:
   - component: {fileID: 6277341532932672975}
   - component: {fileID: 1326077075632400086}
-  - component: {fileID: 1326077075632400080}
   - component: {fileID: 4149956126782693557}
   - component: {fileID: 1326077075632400081}
-  - component: {fileID: 1326077075632400083}
-  - component: {fileID: 1326077075632400082}
   - component: {fileID: 1326077075632400109}
   - component: {fileID: 3984610420783002847}
-  - component: {fileID: -7428955634500060489}
+  - component: {fileID: -7035715282012076589}
+  - component: {fileID: 7661451404893844026}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Untagged
@@ -1875,28 +1873,6 @@ MonoBehaviour:
   physicalDamageModifier: 1
   projectileDamageModifier: 1
   explosionDamageModifier: 1
---- !u!114 &1326077075632400080
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7009502098942656476}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0357f6d36ddb064290f9f1bfa7df895, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementSpeed: 0.4
-  rage: 1
-  attackRange: 2
-  startAttackRange: 1
-  lookSpeed: 0.2
-  attackDelay: 3
-  attackDuration: 2
-  attackHitDelay: 1
-  attackDamage: 2
-  randomAttackDamage: 1
 --- !u!95 &4149956126782693557
 Animator:
   serializedVersion: 3
@@ -1930,61 +1906,6 @@ CapsuleCollider:
   m_Height: 2.3
   m_Direction: 1
   m_Center: {x: 0, y: 1.13, z: 0}
---- !u!114 &1326077075632400083
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7009502098942656476}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77b305aead0751a4fa578b4e2f44a504, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkingClips:
-  - clip: {fileID: 8300000, guid: 1f82b9ddd800b6345bcb71dad118eb58, type: 3}
-    volume: 0.1
-    pitch: 1
-    loop: 1
-  - clip: {fileID: 8300000, guid: cf84d00f73e30ab4ca825f0d7c3a3589, type: 3}
-    volume: 0.1
-    pitch: 1
-    loop: 1
-  - clip: {fileID: 8300000, guid: 02371d1756d82a54a8a9fb5080270d20, type: 3}
-    volume: 0.1
-    pitch: 1
-    loop: 1
-  attackClips:
-  - clip: {fileID: 8300000, guid: f26297339c0c44346bec5ab4ca4c779f, type: 3}
-    volume: 0.2
-    pitch: 1
-    loop: 0
-  - clip: {fileID: 8300000, guid: d148afd16ca64364c9a62682643cca96, type: 3}
-    volume: 0.2
-    pitch: 1
-    loop: 0
-  dieClips:
-  - clip: {fileID: 8300000, guid: a36e747ab22dd1344802819de91689e2, type: 3}
-    volume: 0.8
-    pitch: 1
-    loop: 0
-  - clip: {fileID: 8300000, guid: 4cadc81ad4a93cb4e83dbf72116fa8df, type: 3}
-    volume: 0.2
-    pitch: 1
-    loop: 0
---- !u!114 &1326077075632400082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7009502098942656476}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e8f2f2e8839ce846ba8bf7b340830f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!195 &1326077075632400109
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1999,7 +1920,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -2103,102 +2024,74 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!82 &-7428955634500060489
-AudioSource:
+--- !u!114 &-7035715282012076589
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7009502098942656476}
   m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77b305aead0751a4fa578b4e2f44a504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkingClips:
+  - clip: {fileID: 8300000, guid: 1f82b9ddd800b6345bcb71dad118eb58, type: 3}
+    volume: 0.1
+    pitch: 1
+    loop: 1
+  - clip: {fileID: 8300000, guid: cf84d00f73e30ab4ca825f0d7c3a3589, type: 3}
+    volume: 0.1
+    pitch: 1
+    loop: 1
+  - clip: {fileID: 8300000, guid: 02371d1756d82a54a8a9fb5080270d20, type: 3}
+    volume: 0.1
+    pitch: 1
+    loop: 1
+  attackClips:
+  - clip: {fileID: 8300000, guid: f26297339c0c44346bec5ab4ca4c779f, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+  - clip: {fileID: 8300000, guid: d148afd16ca64364c9a62682643cca96, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+  dieClips:
+  - clip: {fileID: 8300000, guid: a36e747ab22dd1344802819de91689e2, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - clip: {fileID: 8300000, guid: 4cadc81ad4a93cb4e83dbf72116fa8df, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+--- !u!114 &7661451404893844026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7009502098942656476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0357f6d36ddb064290f9f1bfa7df895, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 0.4
+  rage: 1
+  attackRange: 2
+  startAttackRange: 1
+  lookSpeed: 0.2
+  spawnDuration: 5
+  attackDelay: 3
+  attackDuration: 2
+  attackHitDelay: 1
+  attackDamage: 2
+  randomAttackDamage: 1
+  spawningEffectPrefab: {fileID: 5489393081380355896, guid: 7018cdec0a516354fa2117c3466e69dd,
+    type: 3}
 --- !u!1 &7025465621685849017
 GameObject:
   m_ObjectHideFlags: 0

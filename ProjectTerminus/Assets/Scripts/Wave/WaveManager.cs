@@ -5,7 +5,6 @@ using UnityEngine.AI;
 
 public class WaveManager : MonoBehaviour
 {
-
     /* Configuration */
 
     [Tooltip("The player tranform to use as center of system")]
@@ -14,10 +13,15 @@ public class WaveManager : MonoBehaviour
     [Tooltip("The zombie prefab used to instantiate new zombies")]
     public ZombieController zombiePrefab;
 
+    [Tooltip("The controller used to update the hud")]
+    public HUDController hudController;
+
     [Tooltip("The starting spawnrate")]
     public float startingSpawnRate = 6.0f;
 
     /* State */
+
+    public bool IsGameOver { get; set; }
 
     private Queue<ZombieController> inactive;
 
@@ -25,52 +29,75 @@ public class WaveManager : MonoBehaviour
 
     private float spawnDelta;
 
+    private int queuedSpawns;
+
+    private int wave;
+
     private void Start()
     {
         inactive = new Queue<ZombieController>();
         active = new List<ZombieController>();
+
+        IsGameOver = false;
+
+        wave = 1;
+
+        queuedSpawns = 5;
+
+        hudController.UpdateWave(wave, true);
     }
 
     private void FixedUpdate()
     {
         HandleZombies();
 
-        float spawnRate = startingSpawnRate;
-
-        spawnDelta += Time.fixedDeltaTime;
-
-        if(spawnDelta >= spawnRate)
+        if(queuedSpawns > 0)
         {
-            Vector3 position = RandomSpawnLocation(playerTransform.position, 10, 2);
+            float spawnrate = startingSpawnRate;
 
-            Quaternion rotation = Quaternion.LookRotation(playerTransform.position + Vector3.up);
+            spawnDelta += Time.fixedDeltaTime;
 
-            ZombieController zombie;
-
-            if(inactive.Count > 0)
+            if(spawnDelta >= spawnrate)
             {
-                zombie = inactive.Dequeue();
+                Vector3 position = RandomSpawnLocation(playerTransform.position, 10, 2);
 
-                zombie.transform.position = position;
+                Quaternion rotation = Quaternion.LookRotation(playerTransform.position + Vector3.up);
 
-                zombie.transform.rotation = rotation;
+                ZombieController zombie;
 
-                zombie.Revive();
+                if (inactive.Count > 0)
+                {
+                    zombie = inactive.Dequeue();
 
-                zombie.gameObject.SetActive(true);
+                    zombie.transform.position = position;
+
+                    zombie.transform.rotation = rotation;
+
+                    zombie.Revive();
+
+                    zombie.gameObject.SetActive(true);
+
+                    zombie.StartSpawnZombie();
+                }
+                else
+                {
+                    zombie = Instantiate(zombiePrefab, position, rotation, transform);
+                }
+
+                zombie.Enabled = true;
+
+                active.Add(zombie);
+
+                spawnDelta -= spawnrate;
+
+                queuedSpawns--;
+
             }
-            else
-            {
-                zombie = Instantiate(zombiePrefab, position, rotation, transform);
-            }
+        }
 
-            // TODO start rising
-
-            zombie.Enabled = true;
-
-            active.Add(zombie);
-
-            spawnDelta -= spawnRate;
+        if(queuedSpawns <= 0)
+        {
+            NextWave();
         }
 
     }
@@ -97,6 +124,15 @@ public class WaveManager : MonoBehaviour
     }
 
     /* Services */
+
+    public void NextWave()
+    {
+        wave++;
+
+        queuedSpawns = Mathf.CeilToInt(Mathf.Sqrt(30 * wave)) + 5;
+
+        hudController.UpdateWave(wave);
+    }
 
     public Vector3 RandomSpawnLocation(Vector3 center, float max, float min)
     {
