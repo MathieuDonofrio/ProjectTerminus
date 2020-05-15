@@ -736,8 +736,8 @@ MonoBehaviour:
   firingType: 0
   projectilesPerShot: 1
   roundsPerBurst: 1
-  fireDelay: 0.1
-  burstTime: 0.6
+  fireDelay: 0.2
+  burstTime: 0.4
   semiFireDelayModifier: 0.5
   recoilSystem: {fileID: 2594210538805697821}
   gunKickSystem: {fileID: 2594210540031533092}
@@ -747,7 +747,7 @@ MonoBehaviour:
   gunKick: 0.01
   kickSpeed: 0.05
   centerSpeed: 0.2
-  reloadType: 1
+  reloadType: 0
   reloadTime: 1.5
   maxClipSize: 30
   movementMultiplier: 1
