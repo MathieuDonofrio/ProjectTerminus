@@ -51,7 +51,6 @@ public class PauseMenu : MonoBehaviour
     {
         MyPanel.SetActive(false);
         TimeManager.CancelEffect();
-      //  FindObjectOfType<AudioManager>().Play("Theme");
         GameIsPaused = false;
 
     }
@@ -59,13 +58,12 @@ public class PauseMenu : MonoBehaviour
     void MainMenu()
     {
         //end the game
-        FindObjectOfType<GameManager>().EndGame();
+       // FindObjectOfType<MySceneManager>().LoadMainMenu();
 
     }
     void Pause()
     {
         MyPanel.SetActive(true);
-       // FindObjectOfType<AudioManager>().Stop("Theme");
         TimeManager.PauseGame();
         GameIsPaused = true;
     }
