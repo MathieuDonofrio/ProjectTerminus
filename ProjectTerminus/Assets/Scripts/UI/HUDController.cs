@@ -29,6 +29,9 @@ public class HUDController : MonoBehaviour
     [Tooltip("Gun information UI element")]
     public GunInfo gunInfo;
 
+    [Tooltip("Zombie Count UI element")]
+    public ZombieCount zombieCount;
+
     /* Services */
 
     /// <summary>
@@ -122,5 +125,15 @@ public class HUDController : MonoBehaviour
     {
         // Update gun info
         gunInfo.UpdateGunInfo(name, clip, totalAmmo);
+    }
+
+    /// <summary>
+    /// Updates the zombie count
+    /// </summary>
+    /// <param name="count">Amout of zombies</param>
+    public void UpdateZombieCount(int count)
+    {
+        // Update zombie count
+        zombieCount.UpdateCount(Mathf.Max(count, 0));
     }
 }

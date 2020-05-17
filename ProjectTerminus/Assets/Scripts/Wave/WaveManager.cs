@@ -16,6 +16,9 @@ public class WaveManager : MonoBehaviour
     [Tooltip("The controller used to update the hud")]
     public HUDController hudController;
 
+    [Tooltip("Game object container of all road spawn points")]
+    public GameObject roadSpawnPointContainer;
+
     [Tooltip("The starting spawnrate")]
     public float startingSpawnRate = 6.0f;
 
@@ -27,7 +30,11 @@ public class WaveManager : MonoBehaviour
 
     private List<ZombieController> active;
 
+    private SpawnPoint[] roadSpawnPoints;
+
     private float spawnDelta;
+
+    private float currentRage;
 
     private int queuedSpawns;
 
@@ -37,6 +44,8 @@ public class WaveManager : MonoBehaviour
     {
         inactive = new Queue<ZombieController>();
         active = new List<ZombieController>();
+
+        roadSpawnPoints = roadSpawnPointContainer.GetComponentsInChildren<SpawnPoint>();
 
         IsGameOver = false;
 
@@ -53,15 +62,17 @@ public class WaveManager : MonoBehaviour
 
         if(queuedSpawns > 0)
         {
-            float spawnrate = startingSpawnRate;
+            float spawnrate = 0.5f + startingSpawnRate / (wave * 0.5f);
 
             spawnDelta += Time.fixedDeltaTime;
 
             if(spawnDelta >= spawnrate)
             {
-                Vector3 position = RandomSpawnLocation(playerTransform.position, 10, 2);
+                Vector3 position = RandomSpawnPosition();
 
                 Quaternion rotation = Quaternion.LookRotation(playerTransform.position + Vector3.up);
+
+                float rage = 0.75f + currentRage + Random.value * 0.5f;
 
                 ZombieController zombie;
 
@@ -84,6 +95,8 @@ public class WaveManager : MonoBehaviour
                     zombie = Instantiate(zombiePrefab, position, rotation, transform);
                 }
 
+                zombie.rage = rage;
+
                 zombie.Enabled = true;
 
                 active.Add(zombie);
@@ -91,15 +104,15 @@ public class WaveManager : MonoBehaviour
                 spawnDelta -= spawnrate;
 
                 queuedSpawns--;
-
             }
         }
 
-        if(queuedSpawns <= 0)
+        if(queuedSpawns <= 0 && active.Count == 0)
         {
             NextWave();
         }
 
+        hudController.UpdateZombieCount(queuedSpawns + active.Count);
     }
 
     private void HandleZombies()
@@ -129,29 +142,34 @@ public class WaveManager : MonoBehaviour
     {
         wave++;
 
-        queuedSpawns = Mathf.CeilToInt(Mathf.Sqrt(30 * wave)) + 5;
+        queuedSpawns = Mathf.CeilToInt(Mathf.Sqrt(50 * wave)) + 10;
+
+        currentRage = Mathf.Max(Mathf.Log(wave), 0);
 
         hudController.UpdateWave(wave);
     }
 
-    public Vector3 RandomSpawnLocation(Vector3 center, float max, float min)
+    public Vector3 RandomSpawnPosition()
     {
-        float delta = max - min;
+        SpawnPoint spawnPoint = roadSpawnPoints[Random.Range(0, roadSpawnPoints.Length - 1)];
 
-        float range = Mathf.Max(max * 0.25f, 1);
+        Vector2 offset = Random.insideUnitCircle * spawnPoint.radius;
 
-        NavMeshHit hit;
+        Vector3 position = spawnPoint.transform.position;
 
-        for(int i = 0; i < 16; ++i)
+        position.x += offset.x;
+        position.y += offset.y;
+
+        return position;
+    }
+
+    public Vector3 FindOnNavMesh(Vector3 point, float searchRadius)
+    {
+        if (NavMesh.SamplePosition(point, out NavMeshHit hit, searchRadius, NavMesh.AllAreas))
         {
-            Vector3 point = Random.onUnitSphere * (max - delta * Random.value) + center;
-
-            if (NavMesh.SamplePosition(point, out hit, range, NavMesh.AllAreas))
-            {
-                return hit.position;
-            }
+            return hit.position;
         }
 
-        return center;
+        return point;
     }
 }

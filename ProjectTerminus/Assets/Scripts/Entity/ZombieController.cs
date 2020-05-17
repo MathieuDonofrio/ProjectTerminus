@@ -138,7 +138,10 @@ public class ZombieController : MonoBehaviour
     private void StartAttack()
     {
         // Stop agent
-        agent.SetDestination(transform.position);
+        if (agent.enabled)
+        {
+            agent.SetDestination(transform.position);
+        }
 
         // Update state
         IsAttacking = true;

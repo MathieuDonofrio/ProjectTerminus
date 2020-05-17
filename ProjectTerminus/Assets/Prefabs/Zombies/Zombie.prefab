@@ -885,7 +885,7 @@ SkinnedMeshRenderer:
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
@@ -2090,8 +2090,6 @@ MonoBehaviour:
   attackHitDelay: 1
   attackDamage: 2
   randomAttackDamage: 1
-  spawningEffectPrefab: {fileID: 5489393081380355896, guid: 7018cdec0a516354fa2117c3466e69dd,
-    type: 3}
 --- !u!1 &7025465621685849017
 GameObject:
   m_ObjectHideFlags: 0
