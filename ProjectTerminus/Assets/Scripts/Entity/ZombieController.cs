@@ -76,6 +76,8 @@ public class ZombieController : MonoBehaviour
 
     /* Other */
 
+    [SerializeField] private GameObject deathEffect;
+
     private bool attackSuccessfull;
 
     private void Start()
@@ -181,8 +183,6 @@ public class ZombieController : MonoBehaviour
 
     public void StartSpawnZombie()
     {
-        animator.SetBool("rising", true);
-
         lastSpawnTime = Time.time;
 
         IsSpawning = true;
@@ -194,7 +194,6 @@ public class ZombieController : MonoBehaviour
 
         SetTargetNearestPlayer();
 
-        animator.SetBool("rising", false);
         animator.SetBool("walking", true);
 
         audioManager.PlayWalking();
@@ -224,6 +223,7 @@ public class ZombieController : MonoBehaviour
 
         audioManager.StopWalking();
         audioManager.PlayDeath();
+        Instantiate(deathEffect,transform);
     }
 
     /* Services */

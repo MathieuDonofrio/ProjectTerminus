@@ -1123,7 +1123,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3953936621222036822}
-  m_LocalRotation: {x: -0.010624082, y: -0.0017396845, z: 0.05615133, w: 0.9983642}
+  m_LocalRotation: {x: -0.010624083, y: -0.0017396845, z: 0.056151334, w: 0.9983642}
   m_LocalPosition: {x: 0.04218994, y: 0.122120515, z: 0.0005250538}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1586,7 +1586,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5720537729863705702}
-  m_LocalRotation: {x: 0.20826443, y: -0.036596075, z: 0.007798236, w: 0.97735655}
+  m_LocalRotation: {x: 0.20826444, y: -0.036596075, z: 0.0077982363, w: 0.97735655}
   m_LocalPosition: {x: 8.685069e-10, y: 0.14102893, z: -0.0000000050711493}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1883,7 +1883,7 @@ Animator:
   m_GameObject: {fileID: 7009502098942656476}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d9df41778928e1d40b596913457ce3de, type: 3}
-  m_Controller: {fileID: 22100000, guid: 18b67b239e50209478c8d17f0cc15654, type: 2}
+  m_Controller: {fileID: 9100000, guid: dc0bb49a5141bb7468ffe7fb61d1368b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -2090,7 +2090,7 @@ MonoBehaviour:
   attackHitDelay: 1
   attackDamage: 2
   randomAttackDamage: 1
-  spawningEffectPrefab: {fileID: 5489393081380355896, guid: 7018cdec0a516354fa2117c3466e69dd,
+  deathEffect: {fileID: 5803305959978133522, guid: fe60ce901b1ad7947ad33e5ff63846d7,
     type: 3}
 --- !u!1 &7025465621685849017
 GameObject:
