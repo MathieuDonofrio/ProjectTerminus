@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced0296c876f7b6458825f46055d278c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minVisibleDistance: 0.1
+  minVisibleDistance: 0.05
   projectileRenderer: {fileID: 2758759336110125127}
 --- !u!1001 &2745558705860832851
 PrefabInstance:

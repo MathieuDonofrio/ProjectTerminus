@@ -25,12 +25,6 @@ public class GunController : MonoBehaviour
     [Tooltip("The projectile exit point of the gun")]
     public Transform exitPoint;
 
-    [Tooltip("How far from the exit point the projectile will spawn")]
-    public float exitOffset = 0.2f;
-
-    [Tooltip("How far into the exit point the projectile start its first raycast")]
-    public float raycastOffset = 0.4f;
-
     [Tooltip("The projectile maximum travel range")]
     public float range = 100;
 
@@ -55,9 +49,6 @@ public class GunController : MonoBehaviour
 
     [Tooltip("Percentage amount of fire delay time used to shoot all rounds")]
     public float burstTime = 0.6f;
-
-    [Tooltip("Fire delay is multiplied by this value if jitter clicking")]
-    public float semiFireDelayModifier = 0.5f;
 
     [Header("Recoil Settings")]
     [Tooltip("Recoil system used to apply recoil")]
@@ -121,6 +112,18 @@ public class GunController : MonoBehaviour
     [Header("Audio Clips")]
     [Tooltip("Sound played when gun shoots")]
     public AudioClip shot;
+
+    [Tooltip("Sound played when magazine is taken out")]
+    public AudioClip magOut;
+
+    [Tooltip("Sound played when magazine in put in")]
+    public AudioClip magIn;
+
+    [Tooltip("Sound played a individual round is loaded")]
+    public AudioClip individualIn;
+
+    [Tooltip("Sound player is trying to shoot with empty clip")]
+    public AudioClip outOfAmmo;
 
     /* Required Components */
 
@@ -247,6 +250,10 @@ public class GunController : MonoBehaviour
                         Clip++;
 
                         reloadAmt--;
+
+                        gunHolder.TakeIndividual();
+
+                        audioSouce.PlayOneShot(individualIn);
                     }
                 }
                 else
@@ -279,20 +286,20 @@ public class GunController : MonoBehaviour
             recoilSystem.Kick(kick);
 
             // Apply gun kick
-            gunKickSystem.Kick(-gunKick);
+            gunKickSystem.Kick(gunKick, Mathf.Min(fireDelay, 0.2f));
         }
 
         // Calculate ray start
-        Vector3 rayStart = exitPoint.position - exitPoint.transform.forward * raycastOffset;
+        Vector3 rayStart = exitPoint.position - exitPoint.transform.forward;
 
         // Calculate position
-        Vector3 position = exitPoint.position + exitPoint.transform.forward * exitOffset + gunHolder.Movement() * Time.deltaTime;
+        Vector3 position = exitPoint.position + gunHolder.Movement() * Time.deltaTime;
 
         // Calculate ranged direction
         Vector3 rangedDirection = transform.forward * range;
 
         // Calculate deviation amount
-        float deviationAmount = gunHolder.MovementAccuracy() + (gunHolder.aiming ? spreadAim : spreadHip);
+        float deviationAmount = gunHolder.aiming ? spreadAim : spreadHip + gunHolder.MovementAccuracy();
 
         for (int i = 0; i < projectilesPerShot; i++)
         {
@@ -322,20 +329,23 @@ public class GunController : MonoBehaviour
     public bool CheckFiringConditions()
     {
         // Check holding fire
-        bool fire = inputHandler.GetFireInput();
+        bool fire;
 
-        // Get firing delay
-        float delay = firingType == FiringType.SEMI_AUTO
-            ? fireDelay * semiFireDelayModifier : fireDelay;
-
-        // Enable jitter clicking for semi auto and burst
-        if (firingType == FiringType.SEMI_AUTO || firingType == FiringType.BURST)
+        if (firingType == FiringType.SEMI_AUTO)
         {
-            fire |= inputHandler.GetFireDownInput(delay * 0.8f);
+            fire = inputHandler.GetFireDownInput(fireDelay * 0.8f);
+        }
+        else if(firingType == FiringType.BURST)
+        {
+            fire = inputHandler.GetFireInput() || inputHandler.GetFireDownInput(fireDelay * 0.5f);
+        }
+        else
+        {
+            fire = inputHandler.GetFireInput();
         }
 
         // Check delay
-        fire &= Time.time - lastShot >= delay;
+        fire &= Time.time - lastShot >= fireDelay;
 
         // Check if already firing
         fire |= IsFiring;
@@ -351,18 +361,22 @@ public class GunController : MonoBehaviour
 
     public void Fire()
     {
-        // Check clip amount
-        if (IsClipEmpty())
-            return;
+        if (!IsClipEmpty())
+        {
+            // Set firing to true
+            IsFiring = true;
 
-        // Set firing to true
-        IsFiring = true;
+            // Call shoot
+            Shoot();
 
-        // Call shoot
-        Shoot();
-
-        // Decrement clip
-        Clip--;
+            // Decrement clip
+            Clip--;
+        }
+        else
+        {
+            // Play out of ammo
+            audioSouce.PlayOneShot(outOfAmmo);
+        }
     }
 
     public void FinishFiring()
@@ -377,7 +391,7 @@ public class GunController : MonoBehaviour
         roundCounter = 0;
     }
 
-    public void Reload(int amount)
+    public void Reload(int amount, bool instant = false)
     {
         // Check reload amount
         if (amount < 1)
@@ -395,8 +409,13 @@ public class GunController : MonoBehaviour
         // Reset consecutive shot counter
         consecutiveShotCounter = 0;
 
+        // Play mag out
+        if (reloadType == ReloadType.MAGAZINE) audioSouce.PlayOneShot(magOut);
+
         // Record last reload
         lastReload = Time.time;
+
+        if (instant) FinishReloading();
     }
 
     public void StopReloading()
@@ -415,6 +434,9 @@ public class GunController : MonoBehaviour
     {
         // Finalize reload
         Clip += reloadAmt;
+
+        // Play mag in
+        if (reloadType == ReloadType.MAGAZINE) audioSouce.PlayOneShot(magIn);
 
         StopReloading();
     }

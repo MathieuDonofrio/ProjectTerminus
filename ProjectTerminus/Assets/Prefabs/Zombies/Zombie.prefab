@@ -1883,7 +1883,7 @@ Animator:
   m_GameObject: {fileID: 7009502098942656476}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d9df41778928e1d40b596913457ce3de, type: 3}
-  m_Controller: {fileID: 22100000, guid: 18b67b239e50209478c8d17f0cc15654, type: 2}
+  m_Controller: {fileID: 9100000, guid: dc0bb49a5141bb7468ffe7fb61d1368b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -1915,7 +1915,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 7009502098942656476}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -1927,7 +1927,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 2
+  m_ObstacleAvoidanceType: 1
 --- !u!82 &3984610420783002847
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2079,17 +2079,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0357f6d36ddb064290f9f1bfa7df895, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 0.4
+  movementSpeed: 0.5
   rage: 1
   attackRange: 2
   startAttackRange: 1
   lookSpeed: 0.2
-  spawnDuration: 5
+  spawnDuration: 0.01
   attackDelay: 3
   attackDuration: 2
   attackHitDelay: 1
   attackDamage: 2
   randomAttackDamage: 1
+  deathEffectHandler: {fileID: 0}
 --- !u!1 &7025465621685849017
 GameObject:
   m_ObjectHideFlags: 0

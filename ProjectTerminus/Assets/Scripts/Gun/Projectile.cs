@@ -60,7 +60,7 @@ public class Projectile : MonoBehaviour
 
             if(entity != null)
             {
-                if (!entity.IsDead)
+                if (!entity.IsDead && entity.gameObject != shooter.gunHolder.gameObject)
                 {
                     float damage = shooter.damage + Random.value * shooter.randomDamage;
 

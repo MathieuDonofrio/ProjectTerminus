@@ -14,13 +14,15 @@ public class GunKickSystem : MonoBehaviour
 
     /* State */
 
-    [Header("Debug")]
+    private float lastKickTime;
 
-    public float sum;
+    private float lastKick;
 
-    public float add;
+    private float lastSpeed;
 
-    public bool centering;
+    private float sum;
+
+    private bool centering;
 
     private void OnDestroy()
     {
@@ -29,21 +31,33 @@ public class GunKickSystem : MonoBehaviour
 
     private void Update()
     {
-        if (add != 0)
+        
+        if (!centering)
         {
-            float movement = add < 0.01f ? add : add * Time.deltaTime * 2;
+            float delta = Time.time - lastKickTime;
 
-            add -= movement;
-            sum += movement;
+            if (delta < lastSpeed)
+            {
+                sum = -lastKick * delta / lastSpeed;
+            }
+            else
+            {
+                Center();
+            }
         }
-        else if (sum != 0)
+        else
         {
-            Center();
+            if(sum != 0)
+            {
+                float t = (Time.time - lastKickTime + lastSpeed) / lastSpeed;
+
+                sum = Mathf.Lerp(sum, 0, t);
+            }
         }
 
         if(transform.localPosition.z != sum)
         {
-            transform.localPosition = new Vector3(0, 0, Mathf.Min(sum, maxOffset));
+            transform.localPosition = new Vector3(0, 0, sum);
         }
     }
 
@@ -53,18 +67,15 @@ public class GunKickSystem : MonoBehaviour
     /// Applies gun kick to the gun kick system
     /// </summary>
     /// <param name="kick"></param>
-    public void Kick(float kick)
+    public void Kick(float kick, float speed)
     {
-        if (centering)
-        {
-            add = kick;
-        }
-        else
-        {
-            add += kick;
-        }
+        lastKick = kick;
+
+        lastSpeed = speed * 0.5f;
 
         centering = false;
+
+        lastKickTime = Time.time;
     }
 
     /// <summary>
@@ -72,8 +83,6 @@ public class GunKickSystem : MonoBehaviour
     /// </summary>
     public void Center()
     {
-        add = -sum;
-
         centering = true;
     }
 

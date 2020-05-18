@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(AudioSource))]
 public class WaveManager : MonoBehaviour
 {
     /* Configuration */
@@ -19,8 +20,32 @@ public class WaveManager : MonoBehaviour
     [Tooltip("Game object container of all road spawn points")]
     public GameObject roadSpawnPointContainer;
 
+    [Header("Zombie Settings")]
     [Tooltip("The starting spawnrate")]
     public float startingSpawnRate = 6.0f;
+
+    [Tooltip("The starting amount of zombies")]
+    public int startingZombieCount = 5;
+
+    [Header("Skybox Settings")]
+    [Tooltip("Skybox material")]
+    public Material skyboxMat;
+
+    [Tooltip("Normal color tint")]
+    public Color normalTint = Color.white;
+
+    [Tooltip("Color tint when changing waves")]
+    public Color nextWaveTint = Color.red;
+
+    public float skyboxEffectDuration = 2;
+
+    [Header("Audio Clips")]
+    [Tooltip("Sound played when a new wave is comming")]
+    public AudioClip newWaveSFX;
+
+    /* Required Components */
+
+    private AudioSource audioSource;
 
     /* State */
 
@@ -38,10 +63,16 @@ public class WaveManager : MonoBehaviour
 
     private int queuedSpawns;
 
+    private float lastWaveChange;
+
+    private bool resetSkybox;
+
     private int wave;
 
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
         inactive = new Queue<ZombieController>();
         active = new List<ZombieController>();
 
@@ -49,11 +80,38 @@ public class WaveManager : MonoBehaviour
 
         IsGameOver = false;
 
-        wave = 1;
-
-        queuedSpawns = 5;
+        NextWave();
 
         hudController.UpdateWave(wave, true);
+    }
+
+    private void OnDestroy()
+    {
+        skyboxMat.SetColor("_Tint", normalTint);
+    }
+
+    private void LateUpdate()
+    {
+        float delta = Time.time - lastWaveChange;
+
+        if(delta <= skyboxEffectDuration)
+        {
+            float t = Mathf.Sin(delta / skyboxEffectDuration * Mathf.PI);
+
+            skyboxMat.SetColor("_Tint", Color.Lerp(normalTint, nextWaveTint, t));
+
+            skyboxMat.SetFloat("_Exposure", 0.5f + t);
+
+            resetSkybox = true;
+        }
+        else if(resetSkybox)
+        {
+            skyboxMat.SetColor("_Tint", normalTint);
+
+            skyboxMat.SetFloat("_Exposure", 0.5f);
+
+            resetSkybox = false;
+        }
     }
 
     private void FixedUpdate()
@@ -142,11 +200,15 @@ public class WaveManager : MonoBehaviour
     {
         wave++;
 
-        queuedSpawns = Mathf.CeilToInt(Mathf.Sqrt(50 * wave)) + 10;
+        queuedSpawns = wave == 1 ? startingZombieCount : Mathf.CeilToInt(Mathf.Sqrt(40 * wave)) + startingZombieCount;
 
-        currentRage = Mathf.Max(Mathf.Log(wave), 0);
+        currentRage = wave == 1 ? 0 : Mathf.Max(Mathf.Log(wave), 0);
 
         hudController.UpdateWave(wave);
+
+        audioSource.PlayOneShot(newWaveSFX);
+
+        lastWaveChange = Time.time;
     }
 
     public Vector3 RandomSpawnPosition()
@@ -159,6 +221,8 @@ public class WaveManager : MonoBehaviour
 
         position.x += offset.x;
         position.y += offset.y;
+
+        position = FindOnNavMesh(position, spawnPoint.radius);
 
         return position;
     }

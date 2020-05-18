@@ -11,17 +11,15 @@ public class RecoilSystem : MonoBehaviour
 
     /* State */
 
-    [Header("Debug")]
+    private Vector2 sum;
 
-    public Vector2 sum;
+    private Vector2 add;
 
-    public Vector2 add;
+    private float lastKickSpeed;
 
-    public float lastKickSpeed;
+    private float lastCenterSpeed;
 
-    public float lastCenterSpeed;
-
-    public bool centering;
+    private bool centering;
 
     private void OnDestroy()
     {

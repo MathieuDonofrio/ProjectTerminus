@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -8,6 +9,10 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Collider))]
 public class ZombieController : MonoBehaviour
 {
+    /* Static */
+
+    private static Queue<ParticleSystem> deathEffectPool = new Queue<ParticleSystem>();
+
     /* Configuration */
 
     [Header("Movement Settings")]
@@ -28,7 +33,7 @@ public class ZombieController : MonoBehaviour
     public float lookSpeed = 0.2f;
 
     [Tooltip("Amount of seconds the spawning lasts")]
-    public float spawnDuration = 2.0f;
+    public float spawnDuration = 0.01f;
 
     [Header("Attack Settings")]
     [Tooltip("Minimum amount of seconds between each attack")]
@@ -76,7 +81,7 @@ public class ZombieController : MonoBehaviour
 
     /* Other */
 
-    [SerializeField] private GameObject deathEffect;
+    public ZombieDeathEffectHandler deathEffectHandler;
 
     private bool attackSuccessfull;
 
@@ -86,6 +91,8 @@ public class ZombieController : MonoBehaviour
         animator = GetComponent<Animator>();
         entity = GetComponent<Entity>();
         audioManager = GetComponent<ZombieAudioManager>();
+
+        deathEffectHandler = FindObjectOfType<ZombieDeathEffectHandler>();
 
         entity.onDeath += OnDeath;
 
@@ -103,7 +110,7 @@ public class ZombieController : MonoBehaviour
 
             if(!IsAttacking && agent.destination != TargetEntity.transform.position && agent.enabled)
             {
-                agent.SetDestination(TargetEntity.transform.position);
+                agent.destination = TargetEntity.transform.position;
             }
 
             if (IsAttacking)
@@ -122,11 +129,6 @@ public class ZombieController : MonoBehaviour
                 StartAttack();
             }
 
-            Vector3 targetDirection = TargetEntity.transform.position - transform.position;
-
-            transform.rotation = Quaternion.Slerp(transform.rotation, 
-                Quaternion.LookRotation(targetDirection), Time.fixedDeltaTime / lookSpeed);
-
             HandleScreams();
         }
 
@@ -142,7 +144,7 @@ public class ZombieController : MonoBehaviour
         // Stop agent
         if (agent.enabled)
         {
-            agent.SetDestination(transform.position);
+            agent.destination = transform.position;
         }
 
         // Update state
@@ -197,6 +199,8 @@ public class ZombieController : MonoBehaviour
 
         SetTargetNearestPlayer();
 
+        agent.enabled = true;
+
         animator.SetBool("walking", true);
 
         audioManager.PlayWalking();
@@ -226,7 +230,11 @@ public class ZombieController : MonoBehaviour
 
         audioManager.StopWalking();
         audioManager.PlayDeath();
-        Instantiate(deathEffect,transform);
+
+        if(deathEffectHandler != null)
+        {
+            deathEffectHandler.PlayDeathEffect(transform.position + Vector3.up, transform.rotation);
+        }
     }
 
     /* Services */

@@ -236,6 +236,15 @@ public class PlayerController : MonoBehaviour
         // Backwards speed modifier
         if (movement.z < 0) movement.z *= backwardsSpeedModifier;
 
+        GunController gun = gunHolder.CurrentHeldGun();
+
+        if(gun != null)
+        {
+            movement *= gun.movementMultiplier;
+
+            if (gunHolder.aiming) movement *= gun.movementAimingModifier;
+        }
+
         // Transform movement for player rotation
         movement = playerHead.transform.TransformDirection(movement);
 
