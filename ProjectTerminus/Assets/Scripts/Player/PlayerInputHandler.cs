@@ -170,9 +170,18 @@ public class PlayerInputHandler : MonoBehaviour
     /// <summary>
     /// Returns whethe or not the reload input is being held down.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>reload input</returns>
     public bool GetReloadInput()
     {
         return Input.GetButton(GameConstants.k_Reload);
+    }
+
+    /// <summary>
+    /// Returns the current mouse scroll wheel
+    /// </summary>
+    /// <returns>mouse scroll where</returns>
+    public float GetMouseScrollWheel()
+    {
+        return Input.GetAxis(GameConstants.k_MouseScrollWheel);
     }
 }

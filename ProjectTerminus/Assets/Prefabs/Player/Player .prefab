@@ -2772,7 +2772,7 @@ MonoBehaviour:
   fpsCamera: {fileID: 2594210538851694320}
   movementAccuracy: 2
   primaryGun: {fileID: 0}
-  secondaryGun: {fileID: 0}
+  secondaryGun: {fileID: 6235962770959410420}
   autoReload: 1
   unlimitedAmmo: 1
   amountOfClipsPerRefill: 6
@@ -2790,6 +2790,7 @@ MonoBehaviour:
   aiming: 0
   baseFOV: 0
   gunFOV: 0
+  startingReload: 0
 --- !u!114 &2594210540102958812
 MonoBehaviour:
   m_ObjectHideFlags: 0

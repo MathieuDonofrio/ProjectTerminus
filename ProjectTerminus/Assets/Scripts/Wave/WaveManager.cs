@@ -79,15 +79,13 @@ public class WaveManager : MonoBehaviour
         roadSpawnPoints = roadSpawnPointContainer.GetComponentsInChildren<SpawnPoint>();
 
         IsGameOver = false;
-
-        NextWave();
-
-        hudController.UpdateWave(wave, true);
     }
 
     private void OnDestroy()
     {
         skyboxMat.SetColor("_Tint", normalTint);
+
+        wave = 0;
     }
 
     private void LateUpdate()
@@ -165,7 +163,7 @@ public class WaveManager : MonoBehaviour
             }
         }
 
-        if(queuedSpawns <= 0 && active.Count == 0)
+        if(wave == 0 || (queuedSpawns <= 0 && active.Count == 0))
         {
             NextWave();
         }
@@ -204,7 +202,7 @@ public class WaveManager : MonoBehaviour
 
         currentRage = wave == 1 ? 0 : Mathf.Max(Mathf.Log(wave), 0);
 
-        hudController.UpdateWave(wave);
+        hudController.UpdateWave(wave, wave == 1);
 
         audioSource.PlayOneShot(newWaveSFX);
 

@@ -90,6 +90,8 @@ public class GunHolder : MonoBehaviour
 
     public float gunFOV;
 
+    public bool startingReload;
+
     private void Start()
     {
         inputHandler = GetComponent<PlayerInputHandler>();
@@ -101,9 +103,7 @@ public class GunHolder : MonoBehaviour
 
         SetGun(false);
 
-        secondaryGun.Reload(secondaryGun.maxClipSize, true);
-
-        AmmoRefill();
+        startingReload = true;
     }
 
     private void OnDestroy()
@@ -192,6 +192,15 @@ public class GunHolder : MonoBehaviour
                 ReloadHeldGun();
             }
         }
+
+        if (startingReload)
+        {
+            secondaryGun.Reload(secondaryGun.maxClipSize, true);
+
+            AmmoRefill();
+
+            startingReload = false;
+        }
     }
 
     private void UpdateHud()
@@ -231,6 +240,11 @@ public class GunHolder : MonoBehaviour
         {
             SetGun(false);
         }
+
+        if (inputHandler.GetMouseScrollWheel() != 0.0f)
+        {
+            SwitchGun();
+        }
     }
 
     /* Services */
@@ -259,16 +273,13 @@ public class GunHolder : MonoBehaviour
                         gun.Reload(amount);
                     }
                 }
-                else
+                else if (secondaryAmmo > 0)
                 {
-                    if (secondaryAmmo > 0)
-                    {
-                        int amount = Mathf.Min(secondaryAmmo, needed);
+                    int amount = Mathf.Min(secondaryAmmo, needed);
 
-                        if(gun.reloadType != ReloadType.INDIVIDUAL) secondaryAmmo -= amount;
+                    if (gun.reloadType != ReloadType.INDIVIDUAL) secondaryAmmo -= amount;
 
-                        gun.Reload(amount);
-                    }
+                    gun.Reload(amount);
                 }
             }
             else
@@ -343,7 +354,7 @@ public class GunHolder : MonoBehaviour
         }
 
         // Reload gun
-        gun.Reload(secondaryGun.maxClipSize, true);
+        gun.Reload(gun.maxClipSize, true);
 
         // Set the current gun to primary slot
         SetGun(primary);

@@ -397,25 +397,30 @@ public class GunController : MonoBehaviour
         if (amount < 1)
             return;
 
-        // Set reloading to true
-        IsReloading = true;
-
         // Finish firing
         FinishFiring();
 
-        // Set reload amount
-        reloadAmt = Mathf.Min(amount, maxClipSize);
+        if (!instant)
+        {
+            // Set reloading to true
+            IsReloading = true;
+
+            // Set reload amount
+            reloadAmt = Mathf.Min(amount, maxClipSize);
+
+            // Play mag out
+            if (reloadType == ReloadType.MAGAZINE) audioSouce.PlayOneShot(magOut);
+        }
+        else
+        {
+            Clip = Mathf.Min(Clip + amount, maxClipSize);
+        }
 
         // Reset consecutive shot counter
         consecutiveShotCounter = 0;
 
-        // Play mag out
-        if (reloadType == ReloadType.MAGAZINE) audioSouce.PlayOneShot(magOut);
-
         // Record last reload
         lastReload = Time.time;
-
-        if (instant) FinishReloading();
     }
 
     public void StopReloading()

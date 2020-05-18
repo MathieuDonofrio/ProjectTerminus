@@ -12,6 +12,7 @@ public struct GameConstants
 
     public const string k_MouseAxisNameVertical = "Mouse Y";
     public const string k_MouseAxisNameHorizontal = "Mouse X";
+    public const string k_MouseScrollWheel = "Mouse ScrollWheel";
 
     public const string k_Sprint = "Sprint";
     public const string k_Jump = "Jump";

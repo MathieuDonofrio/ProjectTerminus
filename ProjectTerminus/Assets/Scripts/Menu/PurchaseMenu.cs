@@ -6,35 +6,59 @@ using UnityEngine.UIElements;
 
 public class PurchaseMenu : MonoBehaviour
 {
-    public Entity TargetEntity;
-    public GameObject PurchasePanel;
-    private float renderRange = 5f;
-    public Text gunText;
+    /* Configuration */
 
-    // Start is called before the first frame update
-    void Start()
+    public Canvas canvas;
+
+    public Text label;
+
+    public string gunName = "Glock 19";
+
+    public int price = 500;
+
+    public float renderRange = 3f;
+
+    /* State */
+
+    private GunHolder gunHolder;
+
+    private void Start()
     {
         SetTargetNearestPlayer();
     }
 
-
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (IsWithinRenderRange())
         {
-            PurchasePanel.SetActive(true);
+            Economy economy = gunHolder.GetComponent<Economy>();
+
+            SetText(gunName + " | " + price);
+
+            label.color = economy.ContainsAtleast(price) ? Color.white : Color.red;
+
+            canvas.gameObject.SetActive(true);
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                if (economy.Transaction(-price))
+                {
+                    gunHolder.AddGun(gunName);
+
+                    gunHolder.hudController.UpdateMoney(economy.balance, -price);
+                }
+            }
+
         }
         else
         {
-            PurchasePanel.SetActive(false);
+            canvas.gameObject.SetActive(false);
         }
     }
 
     public void SetText(string text)
     {
-        gunText.text = text;
+        label.text = text;
     }
 
     private void SetTargetNearestPlayer()
@@ -43,30 +67,16 @@ public class PurchaseMenu : MonoBehaviour
 
         GameObject closest = SearchUtil.FindClosest(players, transform.position);
 
-        if (closest != null)
-        {
-            Entity entityPlayer = closest.GetComponent<Entity>();
-
-            if (entityPlayer != null)
-            {
-                SetTarget(entityPlayer);
-            }
-        }
-    }
-
-    public void SetTarget(Entity entity)
-    {
-        // Set target entity
-        TargetEntity = entity;
+        gunHolder = closest.GetComponent<GunHolder>();
     }
 
     private bool IsWithinRenderRange()
     {
-        if (TargetEntity == null)
+        if (gunHolder == null)
             return false;
 
         // Calculate square distance
-        float sqrDistance = (TargetEntity.transform.position - transform.position).sqrMagnitude;
+        float sqrDistance = (gunHolder.transform.position - transform.position).sqrMagnitude;
 
         return sqrDistance < renderRange * renderRange;
     }
