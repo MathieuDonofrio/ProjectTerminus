@@ -93,6 +93,9 @@ public class GunController : MonoBehaviour
     public float movementAimingModifier = 0.8f;
 
     [Header("Aiming Settings")]
+    [Tooltip("Crosshair type when aiming")]
+    public CrosshairType crosshairType = CrosshairType.IRON_SIGHT;
+
     [Tooltip("How many seconds it takes for this gun to scope")]
     public float aimSpeed = 0.1f;
 
@@ -237,7 +240,7 @@ public class GunController : MonoBehaviour
         {
             if (reloadType == ReloadType.INDIVIDUAL && reloadAmt > 0)
             {
-                if (!inputHandler.GetFireInput())
+                if (IsClipEmpty() || !inputHandler.GetFireInput())
                 {
                     individualReloadCounter += Time.deltaTime;
 
@@ -374,6 +377,8 @@ public class GunController : MonoBehaviour
         }
         else
         {
+            Debug.Log("Out of ammo");
+
             // Play out of ammo
             audioSouce.PlayOneShot(outOfAmmo);
         }

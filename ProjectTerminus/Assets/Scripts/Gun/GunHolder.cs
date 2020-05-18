@@ -148,7 +148,7 @@ public class GunHolder : MonoBehaviour
 
             if (aimInput)
             {
-                hudController.CrosshairTransition(CrosshairType.IRON_SIGHT, aimSpeed);
+                hudController.CrosshairTransition(currentHeldGun.crosshairType, aimSpeed);
             }
 
             lastAim = Time.time;

@@ -2807,7 +2807,7 @@ MonoBehaviour:
   headRotation:
     yaw: 0
     pitch: 0
-  movementSpeed: 4
+  movementSpeed: 5
   sideSpeedModifier: 0.85
   backwardsSpeedModifier: 0.8
   inAirControl: 0.08
@@ -2817,7 +2817,7 @@ MonoBehaviour:
   slopeSlidingControl: 0.8
   jumpHeight: 1.15
   minJumpDelay: 0.5
-  sprintSpeedModifier: 1.8
+  sprintSpeedModifier: 2
   crouchSpeedModifier: 0.5
   rotationLerpTime: 0.05
   positionLerpTime: 0.2
@@ -2826,7 +2826,7 @@ MonoBehaviour:
     m_Bits: 1
   regenDelay: 6
   regenAmount: 2
-  footstepFrequency: 0.8
+  footstepFrequency: 0.5
   footstepSFXVolume: 0.5
   heartbeatSFXHealthTH: 0.8
   restedHeartRate: 40

@@ -85,6 +85,8 @@ public class WaveManager : MonoBehaviour
     {
         skyboxMat.SetColor("_Tint", normalTint);
 
+        skyboxMat.SetFloat("_Exposure", 0.5f);
+
         wave = 0;
     }
 

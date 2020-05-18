@@ -139,8 +139,9 @@ MonoBehaviour:
   maxClipSize: 30
   movementMultiplier: 1
   movementAimingModifier: 0.8
-  aimSpeed: 0.1
-  fovDecrease: 20
+  crosshairType: 2
+  aimSpeed: 0.12
+  fovDecrease: 25
   damage: 1.5
   randomDamage: 1
   headshotModifier: 2
