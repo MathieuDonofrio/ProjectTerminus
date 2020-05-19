@@ -15,10 +15,14 @@ public class KnifeController : MonoBehaviour
     public float AttackDuration = .2f;
     private float lastAttackTime = Mathf.NegativeInfinity;
 
+    private int layerMask;
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         knifeAnimator = GetComponent<Animator>();
+        layerMask = LayerMask.GetMask("Entity");
+
     }
 
     void Update()
@@ -42,8 +46,6 @@ public class KnifeController : MonoBehaviour
     {
         //Register last attack time
         lastAttackTime = Time.time;
-        
-        //make a sphere cast to see if we hit enemy and if true we apply damage
     }
 
 }
