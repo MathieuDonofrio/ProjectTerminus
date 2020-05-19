@@ -119,7 +119,7 @@ MonoBehaviour:
   projectilePool: {fileID: 0}
   exitPoint: {fileID: 5617242128195128116}
   range: 100
-  projectileSpeed: 80
+  projectileSpeed: 120
   impactStrength: 0.5
   firingType: 0
   projectilesPerShot: 1

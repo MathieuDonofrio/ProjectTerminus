@@ -89,12 +89,12 @@ MonoBehaviour:
   projectilePool: {fileID: 0}
   exitPoint: {fileID: 740700085789183426}
   range: 60
-  projectileSpeed: 80
+  projectileSpeed: 100
   impactStrength: 0.2
   firingType: 0
   projectilesPerShot: 8
   roundsPerBurst: 1
-  fireDelay: 1
+  fireDelay: 0.9
   burstTime: 0.5
   recoilSystem: {fileID: 0}
   gunKickSystem: {fileID: 0}
@@ -105,10 +105,11 @@ MonoBehaviour:
   kickSpeed: 0.05
   centerSpeed: 0.2
   reloadType: 1
-  reloadTime: 6.5
+  reloadTime: 7.2
   maxClipSize: 8
   movementMultiplier: 0.92
   movementAimingModifier: 0.7
+  crosshairType: 1
   aimSpeed: 0.1
   fovDecrease: 20
   damage: 2

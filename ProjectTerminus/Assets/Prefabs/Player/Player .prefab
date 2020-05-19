@@ -2710,7 +2710,7 @@ GameObject:
   - component: {fileID: 2594210540102958802}
   - component: {fileID: 2594210540102958803}
   - component: {fileID: 2594210540102958800}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 'Player '
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -4077,6 +4077,11 @@ PrefabInstance:
       propertyPath: gunKickSystem
       value: 
       objectReference: {fileID: 2594210540031533092}
+    - target: {fileID: 4118450405480587953, guid: 0db95d412b9b1de479b4da6887fe52e7,
+        type: 3}
+      propertyPath: projectileSpeed
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 4118450405480587954, guid: 0db95d412b9b1de479b4da6887fe52e7,
         type: 3}
       propertyPath: m_Name

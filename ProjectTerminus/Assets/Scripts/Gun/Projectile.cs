@@ -20,6 +20,8 @@ public class Projectile : MonoBehaviour
 
     private ProjectileHandler pool;
 
+    private int layerMask;
+
     private float range;
 
     private float speed;
@@ -27,6 +29,11 @@ public class Projectile : MonoBehaviour
     private Vector3 lastPosition;
 
     private float distanceTraveled;
+
+    private void Start()
+    {
+        layerMask = LayerMask.GetMask("Default", "Entity");
+    }
 
     private void Update()
     {
@@ -52,7 +59,7 @@ public class Projectile : MonoBehaviour
 #endif
 
         if (Physics.Linecast(lastPosition, transform.position,
-            out RaycastHit hit, -1, QueryTriggerInteraction.Collide))
+            out RaycastHit hit, layerMask, QueryTriggerInteraction.Collide))
         {
             bool landedHit = false;
 
