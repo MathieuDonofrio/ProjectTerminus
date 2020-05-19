@@ -2710,7 +2710,7 @@ GameObject:
   - component: {fileID: 2594210540102958802}
   - component: {fileID: 2594210540102958803}
   - component: {fileID: 2594210540102958800}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 'Player '
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -2807,7 +2807,7 @@ MonoBehaviour:
   headRotation:
     yaw: 0
     pitch: 0
-  movementSpeed: 4
+  movementSpeed: 5
   sideSpeedModifier: 0.85
   backwardsSpeedModifier: 0.8
   inAirControl: 0.08
@@ -2817,7 +2817,7 @@ MonoBehaviour:
   slopeSlidingControl: 0.8
   jumpHeight: 1.15
   minJumpDelay: 0.5
-  sprintSpeedModifier: 1.8
+  sprintSpeedModifier: 2
   crouchSpeedModifier: 0.5
   rotationLerpTime: 0.05
   positionLerpTime: 0.2
@@ -2826,7 +2826,7 @@ MonoBehaviour:
     m_Bits: 1
   regenDelay: 6
   regenAmount: 2
-  footstepFrequency: 0.8
+  footstepFrequency: 0.5
   footstepSFXVolume: 0.5
   heartbeatSFXHealthTH: 0.8
   restedHeartRate: 40
@@ -4077,6 +4077,11 @@ PrefabInstance:
       propertyPath: gunKickSystem
       value: 
       objectReference: {fileID: 2594210540031533092}
+    - target: {fileID: 4118450405480587953, guid: 0db95d412b9b1de479b4da6887fe52e7,
+        type: 3}
+      propertyPath: projectileSpeed
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 4118450405480587954, guid: 0db95d412b9b1de479b4da6887fe52e7,
         type: 3}
       propertyPath: m_Name

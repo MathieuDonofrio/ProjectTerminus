@@ -89,7 +89,7 @@ MonoBehaviour:
   projectilePool: {fileID: 0}
   exitPoint: {fileID: 7363250664679958425}
   range: 120
-  projectileSpeed: 100
+  projectileSpeed: 120
   impactStrength: 0.2
   firingType: 2
   projectilesPerShot: 1
@@ -109,6 +109,7 @@ MonoBehaviour:
   maxClipSize: 30
   movementMultiplier: 1
   movementAimingModifier: 0.85
+  crosshairType: 1
   aimSpeed: 0.1
   fovDecrease: 20
   damage: 2.5

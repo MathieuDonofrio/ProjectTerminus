@@ -58,8 +58,6 @@ public class Crosshair : MonoBehaviour
 
                 if(currentSize <= minSize)
                 {
-                    currentSize = 1;
-
                     UpdateType(transitionType);
 
                     transition = false;
@@ -96,6 +94,15 @@ public class Crosshair : MonoBehaviour
     {
         if (this.type == type)
             return;
+
+        if(type == CrosshairType.REFLEX_SIGHT)
+        {
+            currentSize = targetSize = 10;
+        }
+        else if (type == CrosshairType.IRON_SIGHT)
+        {
+            currentSize = targetSize = 1;
+        }
 
         Current().gameObject.SetActive(false);
 
