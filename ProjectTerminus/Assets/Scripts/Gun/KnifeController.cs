@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Boo.Lang;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,10 +10,13 @@ public class KnifeController : MonoBehaviour
 {
     private AudioSource audioSource;
     private Animator knifeAnimator;
+    public GameObject player;
 
-    public float AttackRange;
-    public float AttackDelay;
+    public float AttackRange = 4f;
+    public float AttackDelay = 2f;
     public float AttackDuration = .2f;
+
+    public float Damage = 5f;
     private float lastAttackTime = Mathf.NegativeInfinity;
 
     private int layerMask;
@@ -46,6 +50,15 @@ public class KnifeController : MonoBehaviour
     {
         //Register last attack time
         lastAttackTime = Time.time;
+
+        //comments
+        GameObject entity = SearchUtil.FindClosest(SearchUtil.FindEntitesInRange(player, AttackRange),transform.position);
+
+        if (entity != null)
+        {
+            bool isDead = entity.GetComponent<Entity>().Damage(Damage,player,DamageType.PHYSICAL);
+            player.GetComponentInChildren<HUDController>().Hitmarker(isDead);
+        }
     }
 
 }
