@@ -27,5 +27,13 @@ public static class SearchUtil
 
         return target;
     }
+
+    public static Entity[] FindEntitesInRange(Vector3 position, float range)
+    {
+        float sqrRange = range * range;
+
+        return UnityEngine.Object.FindObjectsOfType<Entity>().Where(entity => 
+                (position - entity.transform.position).sqrMagnitude <= sqrRange).ToArray();
+    }
 }
 
