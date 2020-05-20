@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MySceneManager : Singleton<MySceneManager>
 {
+
+    public GameObject loadingScreen;
+    public Text progressText;
+    public Slider slider;
 
     protected override void Awake()
     {
@@ -23,11 +27,27 @@ public class MySceneManager : Singleton<MySceneManager>
 
     public void LoadNextLevel()
     {
-        AsyncOperation ao = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
-        ao.completed += OnLoadOperationComplete;
-
+        var sceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        StartCoroutine(LoadAsynchronously(sceneIndex));
     }
 
+    IEnumerator LoadAsynchronously(int sceneIndex)
+    {
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
+
+        loadingScreen.SetActive(true);
+        while (!operation.isDone)
+        {
+            //make  0 to .9 go 0 to 1
+            float progress = Mathf.Clamp01(operation.progress / .9f);
+            
+            slider.value = progress;
+            progressText.text = progress * 100f + "%";
+            yield return null;
+        }
+    }
+
+    //YAGNI
     public void LoadLevel(string levelName)
     {
         AsyncOperation ao = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Single);
