@@ -8,6 +8,15 @@ public static class TimeManager
 
     private const float pausedFactor = 0f;
 
+    public static void Menu()
+    {
+        Time.timeScale = normalFactor;
+        Time.fixedDeltaTime = Time.timeScale * 0.02f;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
     public static void CancelEffect()
     {
         Time.timeScale = normalFactor;

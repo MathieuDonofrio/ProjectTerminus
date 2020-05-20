@@ -7,8 +7,6 @@ public class MainMenu : MonoBehaviour
 {
     public Button startButton;
 
-    public Button levelButton;
-
     private MySceneManager mySceneManager;
 
     private void Start()
@@ -16,6 +14,8 @@ public class MainMenu : MonoBehaviour
         mySceneManager = FindObjectOfType<MySceneManager>();
 
         startButton.onClick.AddListener(StartGame);
+
+        TimeManager.Menu();
     }
 
     private void StartGame()

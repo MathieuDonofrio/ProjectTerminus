@@ -12,11 +12,9 @@ public class ZombieController : MonoBehaviour
 
     /* Static */
 
-    private static Queue<ParticleSystem> deathEffectPool = new Queue<ParticleSystem>();
-
     private static int staticCounter;
 
-    private const int updateBatches = 20;
+    private const int updateBatches = 10;
 
     /* Configuration */
 
