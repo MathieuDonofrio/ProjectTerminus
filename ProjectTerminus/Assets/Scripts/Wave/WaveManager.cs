@@ -236,4 +236,9 @@ public class WaveManager : MonoBehaviour
 
         return point;
     }
+
+    public int GetCurrentWave()
+    {
+        return wave;
+    }
 }

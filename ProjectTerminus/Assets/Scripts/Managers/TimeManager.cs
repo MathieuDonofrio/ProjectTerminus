@@ -2,31 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeManager : Singleton<TimeManager>
+public static class TimeManager
 {
-    private static readonly float slowdownFactor = .05f;
-    private static readonly float normalFactor = 1f;
-    private static readonly float PausedFactor = 0f;
+    private const float normalFactor = 1f;
 
-    private void Start()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
-    public static void DoSlowMotion()
-    {
-        Time.timeScale = slowdownFactor;
-        Time.fixedDeltaTime = Time.timeScale * .02f;
-    }
+    private const float pausedFactor = 0f;
 
     public static void CancelEffect()
     {
         Time.timeScale = normalFactor;
-        Time.fixedDeltaTime = Time.timeScale * .02f;
+        Time.fixedDeltaTime = Time.timeScale * 0.02f;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public static void PauseGame()
     {
-        Time.timeScale = PausedFactor;
-        Time.fixedDeltaTime = Time.timeScale * .02f;
+        Time.timeScale = pausedFactor;
+        Time.fixedDeltaTime = Time.timeScale * 0.02f;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }

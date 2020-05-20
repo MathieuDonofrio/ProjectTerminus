@@ -9,9 +9,14 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Collider))]
 public class ZombieController : MonoBehaviour
 {
+
     /* Static */
 
     private static Queue<ParticleSystem> deathEffectPool = new Queue<ParticleSystem>();
+
+    private static int staticCounter;
+
+    private const int updateBatches = 20;
 
     /* Configuration */
 
@@ -85,6 +90,10 @@ public class ZombieController : MonoBehaviour
 
     private bool attackSuccessfull;
 
+    private int batchCounter;
+
+    private int batchId;
+
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -95,6 +104,8 @@ public class ZombieController : MonoBehaviour
         deathEffectHandler = FindObjectOfType<ZombieDeathEffectHandler>();
 
         entity.onDeath += OnDeath;
+
+        batchId = staticCounter++ % updateBatches;
 
         StartSpawnZombie();
     }
@@ -108,14 +119,19 @@ public class ZombieController : MonoBehaviour
         {
             UpdateSpeed();
 
-            if(!IsAttacking && agent.destination != TargetEntity.transform.position && agent.enabled)
+            batchCounter++;
+
+            if (!IsAttacking && agent.destination != TargetEntity.transform.position && agent.enabled)
             {
-                agent.destination = TargetEntity.transform.position;
+                if (batchCounter % updateBatches == batchId) // Better performance
+                {
+                    agent.destination = TargetEntity.transform.position;
+                }
             }
 
             if (IsAttacking)
             {
-                if(!IsWithinAttackRange(attackRange) || Time.time - lastAttackTime >= attackDuration / rage)
+                if (!IsWithinAttackRange(attackRange) || Time.time - lastAttackTime >= attackDuration / rage)
                 {
                     FinishAttack();
                 }
@@ -124,7 +140,7 @@ public class ZombieController : MonoBehaviour
                     Attack();
                 }
             }
-            else if(Time.time - lastAttackTime >= attackDelay / rage && IsWithinAttackRange(startAttackRange))
+            else if (Time.time - lastAttackTime >= attackDelay / rage && IsWithinAttackRange(startAttackRange))
             {
                 StartAttack();
             }

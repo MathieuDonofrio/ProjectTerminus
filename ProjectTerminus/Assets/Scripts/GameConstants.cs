@@ -20,4 +20,5 @@ public struct GameConstants
     public const string k_Fire = "Fire";
     public const string k_Aim = "Aim";
     public const string k_Reload = "Reload";
+    public const string k_Knife = "Knife";
 }

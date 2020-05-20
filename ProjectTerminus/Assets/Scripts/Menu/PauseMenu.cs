@@ -6,26 +6,27 @@ using UnityEngine.UI;
 public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
+
     public GameObject MyPanel;
-    [SerializeField] private Button resumeButton;
-    [SerializeField] private Button menuButton;
-    [SerializeField] private Button quitButton;
 
+    public GameObject hud;
 
-    protected void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
-    // Start is called before the first frame update
-    void Start()
+    public Button resumeButton;
+
+    public Button menuButton;
+
+    public Button quitButton;
+
+    private void Start()
     {
         resumeButton.onClick.AddListener(ResumeGame);
         menuButton.onClick.AddListener(MainMenu);
         quitButton.onClick.AddListener(Quit);
+
+        TimeManager.CancelEffect();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -37,36 +38,40 @@ public class PauseMenu : MonoBehaviour
             {
                 Pause();
             }
-
         }
-        
     }
 
-    void Quit()
-    {
-        Application.Quit();
-    }
+    /* Services */
 
-    void ResumeGame()
+    public void ResumeGame()
     {
         MyPanel.SetActive(false);
+
+        hud.SetActive(true);
+
         TimeManager.CancelEffect();
+
         GameIsPaused = false;
-
     }
 
-    void MainMenu()
-    {
-        //end the game
-       // FindObjectOfType<MySceneManager>().LoadMainMenu();
-
-    }
-    void Pause()
+    public void Pause()
     {
         MyPanel.SetActive(true);
+
+        hud.SetActive(false);
+
         TimeManager.PauseGame();
+
         GameIsPaused = true;
     }
 
-   
+    public void MainMenu()
+    {
+        FindObjectOfType<MySceneManager>().LoadMainMenu();
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
 }

@@ -53,5 +53,5 @@ MonoBehaviour:
   skyboxMat: {fileID: 2100000, guid: eda56ce98ee45a04ea48213053b672ab, type: 2}
   normalTint: {r: 0.68516374, g: 0.83397937, b: 0.8396226, a: 0}
   nextWaveTint: {r: 1, g: 0, b: 0, a: 0}
-  skyboxEffectDuration: 2
+  skyboxEffectDuration: 4
   newWaveSFX: {fileID: 8300000, guid: 1985b1a9148d9c947bf84e633503f198, type: 3}

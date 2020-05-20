@@ -5,11 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class MySceneManager : Singleton<MySceneManager>
 {
-
     protected override void Awake()
     {
         base.Awake();
     }
+
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
@@ -25,7 +25,6 @@ public class MySceneManager : Singleton<MySceneManager>
     {
         AsyncOperation ao = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         ao.completed += OnLoadOperationComplete;
-
     }
 
     public void LoadLevel(string levelName)

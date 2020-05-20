@@ -24,12 +24,6 @@ public class PlayerInputHandler : MonoBehaviour
 
     private float lastFire;
 
-    private void Start()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
-
     private void Update()
     {
         HandleSprintInput();
@@ -54,7 +48,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void HandleFireInput()
     {
-        if (Input.GetButtonDown(GameConstants.k_Fire))
+        if (CanClick() && Input.GetButtonDown(GameConstants.k_Fire))
         {
             lastFire = Time.time;
         }
@@ -126,6 +120,7 @@ public class PlayerInputHandler : MonoBehaviour
     {
         bool fire = Input.GetButtonDown(GameConstants.k_Fire);
 
+        fire &= CanClick();
         fire |= Time.time - lastFire <= releaseDelay;
 
         return fire;
@@ -137,7 +132,7 @@ public class PlayerInputHandler : MonoBehaviour
     /// <returns>true if the fire input is being held down, false otherwise</returns>
     public bool GetFireInput()
     {
-        return Input.GetButton(GameConstants.k_Fire);
+        return CanClick() && Input.GetButton(GameConstants.k_Fire);
     }
 
     /// <summary>
@@ -146,7 +141,7 @@ public class PlayerInputHandler : MonoBehaviour
     /// <returns>true if the aim input is being held down, false otherwise</returns>
     public bool GetAimInput()
     {
-        return Input.GetButton(GameConstants.k_Aim);
+        return CanClick() && Input.GetButton(GameConstants.k_Aim);
     }
 
     /// <summary>
@@ -183,5 +178,23 @@ public class PlayerInputHandler : MonoBehaviour
     public float GetMouseScrollWheel()
     {
         return Input.GetAxis(GameConstants.k_MouseScrollWheel);
+    }
+
+    /// <summary>
+    /// Returns whether or not the knife input is being held down.
+    /// </summary>
+    /// <returns>true if the knife input is being held down, false otherwise</returns>
+    public bool GetKnifeInput()
+    {
+        return Input.GetButton(GameConstants.k_Knife);
+    }
+
+    /// <summary>
+    /// If the player can click
+    /// </summary>
+    /// <returns>true if can click, false otherwise</returns>
+    public bool CanClick()
+    {
+        return Time.timeScale != 0;
     }
 }

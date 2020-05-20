@@ -27,15 +27,5 @@ public static class SearchUtil
 
         return target;
     }
-
-    public static GameObject[] FindEntitesInRange(GameObject player, float range)
-    {
-        float sqrRange = range * range;
-
-        return UnityEngine.Object.FindObjectsOfType<Entity>().Where(entity => 
-                entity.gameObject != player &&
-                (player.transform.position - entity.transform.position).sqrMagnitude <= sqrRange)
-                .Select(entity => entity.gameObject).ToArray();
-    }
 }
 

@@ -122,6 +122,12 @@ public class PlayerController : MonoBehaviour
     [Header("HUD")]
     public HUDController hudController;
 
+    [Header("Lose Menu")]
+    public LoseMenu loseMenu;
+
+    [Header("Wave Manager")]
+    public WaveManager waveManager;
+
     /* Required Components */
 
     private PlayerInputHandler inputHandler;
@@ -176,6 +182,8 @@ public class PlayerController : MonoBehaviour
         audioSouce = GetComponent<AudioSource>();
 
         entity.onDamaged += OnDamage;
+
+        entity.onDeath += OnDeath;
     }
 
     private void Update()
@@ -458,6 +466,11 @@ public class PlayerController : MonoBehaviour
     private void OnDamage(float damage, GameObject damager, DamageType damageType) 
     {
         lastDamage = Time.time;
+    }
+
+    private void OnDeath()
+    {
+        loseMenu.LostGame(waveManager.GetCurrentWave());
     }
 
     /* Services */

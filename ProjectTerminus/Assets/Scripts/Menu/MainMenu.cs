@@ -5,19 +5,21 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private Button startButton;
-    [SerializeField] private Button levelButton;
-    [SerializeField] private MySceneManager mySceneManager;
+    public Button startButton;
 
-    void Start()
+    public Button levelButton;
+
+    private MySceneManager mySceneManager;
+
+    private void Start()
     {
-        startButton.onClick.AddListener(StartGame);
         mySceneManager = FindObjectOfType<MySceneManager>();
+
+        startButton.onClick.AddListener(StartGame);
     }
 
-    void StartGame()
+    private void StartGame()
     {
-        //use the scenemanager to start the game
         mySceneManager.LoadNextLevel();
     }
 

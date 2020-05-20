@@ -5,22 +5,48 @@ using UnityEngine.UI;
 
 public class LoseMenu : MonoBehaviour
 {
-    private Button menuButton;
+    public GameObject hud;
+
+    public GameObject losePanel; 
+
     public Text roundSurvivedText;
 
-    void Start()
+    public Text highscoreText;
+
+    public Button menuButton;
+
+    private void Start()
     {
-        menuButton = GetComponentInChildren<Button>();
         menuButton.onClick.AddListener(MainMenu);
     }
 
-    public void SetRoundSurvived(int roundSurvived)
-    {
-        roundSurvivedText.text = "ROUND SURVIVED: " + roundSurvived;
-    }
-   
-    void MainMenu()
+    public void MainMenu()
     {
         FindObjectOfType<MySceneManager>().LoadMainMenu();
     }
+
+    public void LostGame(int roundSurvived)
+    {
+        roundSurvivedText.text = "ROUND SURVIVED: " + roundSurvived;
+
+        int highscore = PlayerPrefs.GetInt("highscore");
+
+        if (highscore < roundSurvived) highscore = roundSurvived;
+
+        PlayerPrefs.SetInt("highscore", highscore);
+
+        highscoreText.text = "HIGHSCORE: " + highscore;
+
+        losePanel.SetActive(true);
+
+        Invoke("StopGame", 2.0f);
+    }
+
+    public void StopGame()
+    {
+        hud.SetActive(false);
+
+        TimeManager.PauseGame();
+    }
+  
 }

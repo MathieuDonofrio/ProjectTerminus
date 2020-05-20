@@ -33,6 +33,8 @@ public class Projectile : MonoBehaviour
     private void Start()
     {
         layerMask = LayerMask.GetMask("Default", "Entity");
+
+       
     }
 
     private void Update()
