@@ -27,7 +27,7 @@ public class LoseMenu : MonoBehaviour
 
     public void LostGame(int roundSurvived)
     {
-        roundSurvivedText.text = "ROUND SURVIVED: " + roundSurvived;
+        roundSurvivedText.text = "ROUNDS SURVIVED: " + roundSurvived;
 
         int highscore = PlayerPrefs.GetInt("highscore");
 

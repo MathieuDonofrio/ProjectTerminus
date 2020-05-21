@@ -13,6 +13,9 @@ public class KnifeController : MonoBehaviour
     [Tooltip("HUD controller")]
     public HUDController hudController;
 
+    [Tooltip("Economy")]
+    public Economy economy;
+
     [Header("Attack settings")]
     [Tooltip("Range of attack")]
     public float attackRange = 2f;
@@ -97,8 +100,17 @@ public class KnifeController : MonoBehaviour
         // Do damage and get result
         bool killed = entity.Damage(damage, gameObject, DamageType.PHYSICAL);
 
+        // Calculate points
+        int points = killed ? 100 : 50;
+
+        // Add points
+        economy.Transaction(points);
+
         // Flag hit
         hudController.Hitmarker(killed);
+
+        // Update money
+        hudController.UpdateMoney(economy.balance, points);
 
         // Set attack successful
         attackSuccessful = true;
